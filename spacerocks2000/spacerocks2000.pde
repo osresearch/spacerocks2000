@@ -18,15 +18,24 @@ void setup() {
 }
 
 
+float angle = 0;
+
 void draw() {
 	background(0);
-	asteroids_write("Hello, world!", 100, 100, 3.0);
-	asteroids_write("abcdefghijklm", 100, 250, 3.0);
-	asteroids_write("nopqrstuvwxyz", 100, 300, 3.0);
-	asteroids_write("`0123456789-=", 100, 450, 3.0);
-	asteroids_write("~!@#$%^&*()_+", 100, 500, 3.0);
-	asteroids_write("[]\\;',./", 100, 550, 3.0);
-	asteroids_write("{}|:\"<>?", 100, 650, 3.0);
+	pushMatrix();
+
+	translate(width/2, height/2);
+	rotate(angle += 0.02);
+
+	asteroids_write("Hello, world!", -300, -200, 3.0);
+	asteroids_write("abcdefghijklm", -300, -150, 3.0);
+	asteroids_write("nopqrstuvwxyz", -300, -100, 3.0);
+	asteroids_write("`0123456789-=", -300, -50, 3.0);
+	asteroids_write("~!@#$%^&*()_+", -300,  0, 3.0);
+	asteroids_write("[]\\;',./", -300, 50, 3.0);
+	asteroids_write("{}|:\"<>?", -300, 100, 3.0);
+
+	popMatrix();
 }
 
 
