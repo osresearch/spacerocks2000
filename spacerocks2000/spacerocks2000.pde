@@ -11,14 +11,21 @@
 final float dt = 1.0 / 25;
 float radius = 1000;
 Planet planet;
+
 SpherePoint ship;
 boolean easy = true;
+float thrust = 0;
+float rcu = 0;
+float psi_rate = 0;
+float psi = 0;
+
 
 Asteroid asteroids[];
 
 void setup()
 {
 	planet = new Planet();
+
 	ship = new SpherePoint();
 	ship.p = new PVector(1,0,0).normalize();
 	ship.v = new PVector(0,-1,0).normalize();
@@ -41,11 +48,6 @@ void setup()
 }
 
 
-float thrust = 0;
-float rcu = 0;
-float psi_rate = 0;
-float psi = 0;
-
 void keyPressed()
 {
 	if (key == CODED) {
@@ -54,9 +56,9 @@ void keyPressed()
 		if (keyCode == DOWN)
 			thrust = -0.25;
 		if (keyCode == LEFT)
-			rcu = -0.95;
+			rcu = -1.5;
 		if (keyCode == RIGHT)
-			rcu = +0.95;
+			rcu = +1.5;
 	} else
 	if (key == 'e') {
 		// toggle the rotation assist
@@ -100,11 +102,7 @@ void draw()
 	ambientLight(255,255,255);
 
 	// draw any overlays
-	pushMatrix();
-	translate(width/2, height/2);
-	translate(0,0,400);
-	asteroids_write("SpaceRocks 2000", -400, -400, 3.0);
-	popMatrix();
+	asteroids_write("SpaceRocks 2000", 100, 100, 3.0);
 
 	// set the camera to be looking at the planet
 	// from off in the X axis.  Our "UP" is in the direction
@@ -157,34 +155,20 @@ void draw()
 
 	ship.update(dt);
 
+	PVector cpos = PVector.mult(ship.p, 1.5*radius);
+	PVector ccen = PVector.mult(up, -radius/3);
+	//cpos.sub(ccen);
+
 	camera(
-		1.5*radius*ship.p.x,
-		1.5*radius*ship.p.y,
-		1.5*radius*ship.p.z, // stupid left hand reference frame
-		0,
-		0,
-		0,
-		up.x,
-		up.y,
-		up.z
+		cpos.x, cpos.y, cpos.z,
+		ccen.x, ccen.y, ccen.z,
+		up.x, up.y, up.z
 	);
 	//scale(1,1,-1); // make this right hand
-
-/*
-	// draw the ship
-	stroke(255,255,255,255);
-	fill(255,255,255,100);
-	line(0,-50, -20,+20);
-	line(0,-50, +20,+20);
-	line(-20,+20, 0,+10);
-	line(+20,+20, 0,+10);
-	popMatrix();
-*/
 
 	// draw the planet underneath us,
 	// the camera is already in the ship position,
 	// so the planet is drawn in ECEF frame
-	pushMatrix();
 	planet.display(radius);
 
 	// update the asteroid positions
@@ -194,24 +178,66 @@ void draw()
 		asteroid.display(radius);
 	}
 
+	draw_ship(radius);
+
+	popMatrix();
+}
+
+void draw_ship(float radius)
+{
 	// draw the "ship" based on our XYZ position to track errors
+/*
+	pushMatrix();
 	noStroke();
 	fill(255,0,0,255);
-
-	pushMatrix();
 	PVector p = PVector.mult(ship.p, radius);
 	translate(p.x, p.y, p.z);
 	sphere(15);
 	popMatrix();
+*/
+
+	// draw the ship
+	pushMatrix();
+	PVector p = PVector.mult(ship.p, radius);
+	translate(p.x, p.y, p.z);
+
+	// how to flaten the perspective?
+	float lon = atan2(ship.p.y, ship.p.z);
+	float lat = asin(ship.p.z);
+	rotateY(-lat);
+	rotateZ(-lon);
+
+	stroke(255,255,255,255);
+	fill(255,255,255,100);
+	line(0,-50, -20,+20);
+	line(0,-50, +20,+20);
+	line(-20,+20, 0,+10);
+	line(+20,+20, 0,+10);
+	popMatrix();
+
+
+	// project the next ten seconds
+	noFill();
+	beginShape();
+	for(int i = 0 ; i < 12 ; i+=3)
+	{
+		p = PVector.mult(ship.predict(i/10.0), radius+10);
+		stroke(100,100,200,200 - i * 20);
+		vertex(p.x, p.y, p.z);
+	}
+	endShape();
 
 	pushMatrix();
-	p = PVector.mult(ship.predict(1), radius);
+	stroke(100,100,200,200);
+	p = PVector.mult(ship.predict(1.0), radius+10);
 	translate(p.x, p.y, p.z);
-	sphere(5);
+	box(10);
 	popMatrix();
+}
 
-	popMatrix();
-
+/*
+void draw_axis(void)
+{
 	// draw an axis to help us
 	pushMatrix();
 	fill(255,0,0,255);
@@ -230,6 +256,8 @@ void draw()
 	translate(0,0,250);
 	box(10,10,500);
 	popMatrix();
+}
+*/
 	
 /*
 	asteroids_write("abcdefghijklm", -300, -150, 3.0);
@@ -239,6 +267,3 @@ void draw()
 	asteroids_write("[]\\;',./", -300, 50, 3.0);
 	asteroids_write("{}|:\"<>?", -300, 100, 3.0);
 */
-
-	popMatrix();
-}
