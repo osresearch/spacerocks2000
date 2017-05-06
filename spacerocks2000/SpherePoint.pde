@@ -6,6 +6,15 @@
  *
  */
 
+// Predict the position p using the Rodrigues' rotation formula
+// P = P cos(theta) + (V x P) sin(theta) + V(V.P)(1-cos(theta))
+PVector vectorRotate(PVector p, PVector v, float theta)
+{
+	return PVector.mult(p,cos(theta))
+		.add(v.cross(p).mult(sin(theta)))
+		.add(PVector.mult(v,v.dot(p)*(1.0-cos(theta))));
+}
+
 class SpherePoint
 {
 	SpherePoint()
@@ -32,14 +41,10 @@ class SpherePoint
 	PVector v; // perpendicular to p, describing the great circle
 	float vel; // magnitude of the velocity rotation in rads/s
 
-	// Predict the position p using the Rodrigues' rotation formula
-	// P = P cos(theta) + (V x P) sin(theta) + V(V.P)(1-cos(theta))
 	PVector predict(float dt)
 	{
 		float theta = dt * vel;
-		return PVector.mult(p,cos(theta))
-			.add(v.cross(p).mult(sin(theta)))
-			.add(PVector.mult(v,v.dot(p)*(1.0-cos(theta))));
+		return vectorRotate(p, v, theta);
 	}
 
 	// Update the position
