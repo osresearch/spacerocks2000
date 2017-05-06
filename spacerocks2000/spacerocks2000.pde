@@ -24,20 +24,42 @@ void setup()
 }
 
 
+float thrust = 0;
+float rcu = 0;
+float xv = 0;
+float zv = 0;
 float x_angle = 0;
 float z_angle = 0;
 
-void keyPressed() {
-	//int keyIndex = -1;
+void keyPressed()
+{
 	if (key == CODED) {
 		if (keyCode == UP)
-			x_angle += 0.1;
+			thrust = 1;
 		if (keyCode == DOWN)
-			x_angle -= 0.1;
+			thrust = -0.5;
 		if (keyCode == LEFT)
-			z_angle += 0.1;
+			rcu = -0.1;
 		if (keyCode == RIGHT)
-			z_angle -= 0.1;
+			rcu = +0.1;
+	} else
+	if (key == ' ') {
+		// fire a space bullet
+		xv = zv = 0;
+	}
+}
+
+void keyReleased()
+{
+	if (key == CODED) {
+		if (keyCode == UP)
+			thrust = 0;
+		if (keyCode == DOWN)
+			thrust = 0;
+		if (keyCode == LEFT)
+			rcu = 0;
+		if (keyCode == RIGHT)
+			rcu = 0;
 	}
 }
 
@@ -65,11 +87,17 @@ void draw()
 	line(+20,+20, 0,+10);
 	popMatrix();
 
+	// update the angles (should be positions)
+	xv += thrust * 0.001;
+	zv += rcu * 0.001;
+	x_angle += xv;
+	z_angle += zv;
+
 	// draw the planet underneath us
 	pushMatrix();
 	translate(0,0,-1200);
-	rotateX(x_angle);
-	rotateZ(z_angle);
+	rotateX(-x_angle);
+	rotateZ(-z_angle);
 	planet.display();
 	popMatrix();
 
