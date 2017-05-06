@@ -25,7 +25,8 @@ class Asteroid
 		pushStyle();
 		pushMatrix();
 
-		fill(255,0,0,255);
+		noStroke();
+		fill(255,255,255,255);
 		PVector p = PVector.mult(pos.p, radius);
 		translate(p.x, p.y, p.z);
 		sphere(20);
