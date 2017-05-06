@@ -2,18 +2,28 @@
  * Space Rocks 2000
  *
  * The updated version of the hit game, "Space Rocks".
+ * Position of things must be tracked in quaternions to avoid
+ * discontinuos errors
  *
  * (c) 2017 Trammell Hudson
  */
 
-float angle = 0;
+float radius = 1000;
 Planet planet;
+
+Asteroid asteroids[];
 
 void setup()
 {
 	planet = new Planet();
 
-	size(2048, 1500, P3D);
+	asteroids = new Asteroid[8];
+	for(int i = 0 ; i < 8 ; i++)
+	{
+		asteroids[i] = new Asteroid();
+	}
+
+	size(2000, 1125, P3D);
 	surface.setResizable(true);
 
 	blendMode(ADD);
@@ -26,10 +36,10 @@ void setup()
 
 float thrust = 0;
 float rcu = 0;
-float xv = 0;
-float zv = 0;
-float x_angle = 0;
-float z_angle = 0;
+float vx = 0;
+float vy = 0;
+float vz = 0;
+float psi = 0;
 
 void keyPressed()
 {
@@ -45,7 +55,7 @@ void keyPressed()
 	} else
 	if (key == ' ') {
 		// fire a space bullet
-		xv = zv = 0;
+		//xv = zv = 0;
 	}
 }
 
@@ -63,6 +73,8 @@ void keyReleased()
 	}
 }
 
+float x_angle;
+float z_angle;
 
 void draw()
 {
@@ -87,19 +99,47 @@ void draw()
 	line(+20,+20, 0,+10);
 	popMatrix();
 
-	// update the angles (should be positions)
-	xv += thrust * 0.001;
-	zv += rcu * 0.001;
-	x_angle += xv;
-	z_angle += zv;
+/*
+	// update the velocity vector
+	vx += hx * thrust * dt;
+	vy += hy * thrust * dt;
+	vz += hz * thrust * dt;
+	
+	// update the position
+	x += vx * dt;
+	y += vy * dt;
+	z += vz * dt;
+
+	// normalize the position on the sphere
+	float r = sqrt(x*x + y*y + z*z);
+	x /= r;
+	y /= r;
+	z /= r;
+
+	// update the heading and velocity vectors to be tangent
+	// to our new lat/lon
+	
+	float lat = Math.atan2(y, x);
+	float lon = Math.acos(z);
+*/
 
 	// draw the planet underneath us
 	pushMatrix();
-	translate(0,0,-1200);
-	rotateX(-x_angle);
-	rotateZ(-z_angle);
-	planet.display();
+	translate(0,200,-radius*0.8);
+	//rotateX(-lat);
+	//rotateY(-lon);
+	//rotate(-psi);
+	planet.display(radius);
+
+	// update the asteroid positions
+	for(Asteroid asteroid : asteroids)
+	{
+		asteroid.update(0.4);
+		asteroid.display(radius);
+	}
+	
 	popMatrix();
+
 
 	
 /*
