@@ -1,0 +1,61 @@
+#!/usr/bin/perl
+# Reduce the resolution of a GMT plot
+# gmt pscoast -R0/360/-90/90 -Dc -W -M | simplify 0.1 > PlanetPoints.pde
+# "Crude" data is 100k points, 
+use warnings;
+use strict;
+
+my $threshold = shift || 0.1;
+my $ox = 0;
+my $oy = 0;
+
+my @points;
+
+print "final float[] planet_points = new float[]{\n";
+
+while(<>)
+{
+	if(/^#/)
+	{
+		print "// $_";
+		next;
+	}
+
+	if(/^>/)
+	{
+		#print "// $_";
+		print_points();
+		@points = ();
+		next;
+	}
+
+	my ($x,$y) = split /\t/;
+
+	my $dx = $x - $ox;
+	my $dy = $y - $oy;
+	my $dist = sqrt($dx*$dx + $dy*$dy);
+
+	next if $dist < $threshold and @points;
+
+	push @points, [$x,$y];
+	$ox = $x;
+	$oy = $y;
+}
+
+print_points();
+print "};\n";
+
+sub print_points
+{
+	return if @points <= 2;
+
+	print "//\n";
+	for(@points)
+	{
+		printf "%.6f,%.6f,\n", $_->[0], $_->[1];
+	}
+	printf "%.6f,%.6f,\n", $points[0]->[0], $points[0]->[1];
+
+	print "0,0,\n";
+}
+
