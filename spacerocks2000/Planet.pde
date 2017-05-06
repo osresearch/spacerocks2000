@@ -26,8 +26,8 @@ class Planet
 	void display()
 	{
 		pushStyle();
-		fill(0,0,0);
-		noStroke();
+		fill(0,0,0,255);
+		stroke(20,20,20,200);
 		sphere(radius-4);
 
 		noFill();
@@ -45,13 +45,13 @@ class Planet
 				continue;
 			}
 
-			float lon = 2 * 3.1415 * px / 180;
-			float lat = 3.1415 * py / 180;
+			float lon = -3.1415 * px / 180;
+			float lat = +3.1415 * py / 180;
 
 			// project n,e into x,y,z
 			float x = (float) (radius * Math.cos(lat)*Math.cos(lon));
-			float y = (float) (radius * Math.cos(lat)*Math.sin(lon));
-			float z = (float) (radius * Math.sin(lat));
+			float z = (float) (radius * Math.cos(lat)*Math.sin(lon));
+			float y = (float) (radius * Math.sin(lat));
 			vertex(x,y,z);
 		}
 
