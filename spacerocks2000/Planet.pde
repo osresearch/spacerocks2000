@@ -64,14 +64,14 @@ class Planet
 	{
 		pushStyle();
 
-		fill(0,0,0,255);
-		stroke(20,20,20,200);
-		sphere(radius-2);
+		fill(0,0,0,1);
+		stroke(50,50,50,100);
+		sphere(radius-3);
 
 		noFill();
-		stroke(120,120,120,255);
+		stroke(255,255,255,80);
 		display_points(radius, map_points);
-		stroke(80,80,80,255);
+		stroke(255,255,255,60);
 		display_points(radius, country_points);
 
 		popStyle();
