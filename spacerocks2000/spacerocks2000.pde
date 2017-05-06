@@ -6,34 +6,49 @@
  * (c) 2017 Trammell Hudson
  */
 
-void setup() {
-    size(1024, 768, P3D);
-    surface.setResizable(true);
+float angle = 0;
+Planet planet;
 
-    blendMode(ADD);
-    noFill();
-    stroke(212, 128, 32, 128);
+void setup()
+{
+	planet = new Planet();
 
-    frameRate(25);
+	size(2048, 1500, P3D);
+	surface.setResizable(true);
+
+	blendMode(ADD);
+	noFill();
+	stroke(212, 128, 32, 128);
+
+	frameRate(25);
 }
 
 
-float angle = 0;
 
-void draw() {
+void draw()
+{
 	background(0);
 	pushMatrix();
 
+
 	translate(width/2, height/2);
-	rotate(angle += 0.02);
+
 
 	asteroids_write("Hello, world!", -300, -200, 3.0);
+
+	translate(0,0,-1200);
+	//rotateX(angle += 0.02);
+	//rotateZ(angle += 0.02);
+
+	planet.display();
+/*
 	asteroids_write("abcdefghijklm", -300, -150, 3.0);
 	asteroids_write("nopqrstuvwxyz", -300, -100, 3.0);
 	asteroids_write("`0123456789-=", -300, -50, 3.0);
 	asteroids_write("~!@#$%^&*()_+", -300,  0, 3.0);
 	asteroids_write("[]\\;',./", -300, 50, 3.0);
 	asteroids_write("{}|:\"<>?", -300, 100, 3.0);
+*/
 
 	popMatrix();
 }
