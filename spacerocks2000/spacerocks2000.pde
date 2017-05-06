@@ -8,14 +8,18 @@
  * (c) 2017 Trammell Hudson
  */
 
+final float dt = 1.0 / 25;
 float radius = 1000;
 Planet planet;
+SpherePoint ship;
 
 Asteroid asteroids[];
 
 void setup()
 {
 	planet = new Planet();
+	ship = new SpherePoint();
+	ship.v = new PVector(0,1,1).normalize();
 
 	asteroids = new Asteroid[8];
 	for(int i = 0 ; i < 8 ; i++)
@@ -45,9 +49,9 @@ void keyPressed()
 {
 	if (key == CODED) {
 		if (keyCode == UP)
-			thrust = 1;
+			thrust = 0.1;
 		if (keyCode == DOWN)
-			thrust = -0.5;
+			thrust = -0.05;
 		if (keyCode == LEFT)
 			rcu = -0.1;
 		if (keyCode == RIGHT)
@@ -83,13 +87,33 @@ void draw()
 
 	ambientLight(255,255,255);
 
-	translate(width/2, height/2);
-
-
+	// draw any overlays
 	pushMatrix();
+	translate(width/2, height/2);
 	translate(0,0,400);
 	asteroids_write("SpaceRocks 2000", -400, -400, 3.0);
+	popMatrix();
 
+	// Update our ship position
+	ship.vel += thrust * dt;
+	ship.update(dt);
+
+	// set the camera to be looking at the planet
+	// from off in the X axis
+	PVector up = ship.p.cross(ship.v);
+	camera(
+		1.5*radius*ship.p.x,
+		1.5*radius*ship.p.y,
+		1.5*radius*ship.p.z,
+		0,
+		0,
+		0,
+		up.x,
+		up.y,
+		up.z
+	);
+
+/*
 	// draw the ship
 	stroke(255,255,255,255);
 	fill(255,255,255,100);
@@ -98,45 +122,27 @@ void draw()
 	line(-20,+20, 0,+10);
 	line(+20,+20, 0,+10);
 	popMatrix();
-
-/*
-	// update the velocity vector
-	vx += hx * thrust * dt;
-	vy += hy * thrust * dt;
-	vz += hz * thrust * dt;
-	
-	// update the position
-	x += vx * dt;
-	y += vy * dt;
-	z += vz * dt;
-
-	// normalize the position on the sphere
-	float r = sqrt(x*x + y*y + z*z);
-	x /= r;
-	y /= r;
-	z /= r;
-
-	// update the heading and velocity vectors to be tangent
-	// to our new lat/lon
-	
-	float lat = Math.atan2(y, x);
-	float lon = Math.acos(z);
 */
 
-	// draw the planet underneath us
+	// draw the planet underneath us,
+	// the camera is already in the ship position,
+	// so the planet is drawn in ECEF frame
 	pushMatrix();
-	translate(0,200,-radius*0.8);
-	//rotateX(-lat);
-	//rotateY(-lon);
-	//rotate(-psi);
 	planet.display(radius);
 
 	// update the asteroid positions
 	for(Asteroid asteroid : asteroids)
 	{
-		asteroid.update(0.4);
+		asteroid.update(dt);
 		asteroid.display(radius);
 	}
+
+	// draw the "ship" based on our XYZ position to track errors
+	noStroke();
+	fill(255,0,0,255);
+	PVector p = PVector.mult(ship.p, radius);
+	translate(p.x, p.y, p.z);
+	sphere(15);
 	
 	popMatrix();
 
