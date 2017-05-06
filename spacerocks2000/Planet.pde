@@ -45,7 +45,7 @@ class Planet
 				continue;
 			}
 
-			float lon = -3.1415 * px / 180;
+			float lon = +3.1415 * px / 180;
 			float lat = +3.1415 * py / 180;
 
 			// project n,e into x,y,z

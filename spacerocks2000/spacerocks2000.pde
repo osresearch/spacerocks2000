@@ -52,15 +52,18 @@ void draw()
 	translate(width/2, height/2);
 
 
-	asteroids_write("Hello, world!", -300, -200, 3.0);
+	pushMatrix();
+	translate(0,0,400);
+	asteroids_write("SpaceRocks 2000", -400, -400, 3.0);
 
 	// draw the ship
 	stroke(255,255,255,255);
 	fill(255,255,255,100);
-	line(0,50, -20,-20);
-	line(0,50, +20,-20);
-	line(-20,-20, 0,-10);
-	line(+20,-20, 0,-10);
+	line(0,-50, -20,+20);
+	line(0,-50, +20,+20);
+	line(-20,+20, 0,+10);
+	line(+20,+20, 0,+10);
+	popMatrix();
 
 	// draw the planet underneath us
 	pushMatrix();
@@ -82,5 +85,3 @@ void draw()
 
 	popMatrix();
 }
-
-
