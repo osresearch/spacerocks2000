@@ -40,9 +40,7 @@ void setup()
 
 float thrust = 0;
 float rcu = 0;
-float vx = 0;
-float vy = 0;
-float vz = 0;
+float psi_rate = 0;
 float psi = 0;
 
 void keyPressed()
@@ -53,13 +51,15 @@ void keyPressed()
 		if (keyCode == DOWN)
 			thrust = -0.05;
 		if (keyCode == LEFT)
-			rcu = -0.1;
+			rcu = -0.5;
 		if (keyCode == RIGHT)
-			rcu = +0.1;
+			rcu = +0.5;
 	} else
 	if (key == ' ') {
-		// fire a space bullet
-		//xv = zv = 0;
+		// fire a space bullet?
+
+		// arrest any rotation
+		psi_rate = 0;
 	}
 }
 
@@ -95,12 +95,16 @@ void draw()
 	popMatrix();
 
 	// Update our ship position
+	psi_rate += rcu * dt;
+	psi += psi_rate * dt;
 	ship.vel += thrust * dt;
 	ship.update(dt);
 
 	// set the camera to be looking at the planet
 	// from off in the X axis
-	PVector up = ship.p.cross(ship.v);
+	PVector vel_up = ship.p.cross(ship.v);
+	PVector up = vectorRotate(vel_up, ship.p, psi);
+
 	camera(
 		1.5*radius*ship.p.x,
 		1.5*radius*ship.p.y,
