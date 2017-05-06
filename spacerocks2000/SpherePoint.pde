@@ -7,12 +7,21 @@
  */
 
 // Predict the position p using the Rodrigues' rotation formula
+// https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
 // P = P cos(theta) + (V x P) sin(theta) + V(V.P)(1-cos(theta))
+// Rotates vector P by theta around vector V.
 PVector vectorRotate(PVector p, PVector v, float theta)
 {
 	return PVector.mult(p,cos(theta))
 		.add(v.cross(p).mult(sin(theta)))
 		.add(PVector.mult(v,v.dot(p)*(1.0-cos(theta))));
+}
+
+
+// Processing's "angleBetween" doesn't go the long way around
+float vectorAngle(PVector a, PVector b)
+{
+	return atan2(a.cross(b).mag(), a.dot(b));
 }
 
 class SpherePoint

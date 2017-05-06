@@ -3,6 +3,9 @@
  *
  * Generated from the wikipedia simplified earth map:
  * https://upload.wikimedia.org/wikipedia/commons/8/8e/BlankMap_World_simple.svg
+ *
+ * unfortunatley processing's reference frame is left-hand, so the
+ * normal equations don't work and we have to invert the Y axis.
  */
 
 
@@ -18,8 +21,8 @@ class Planet
 		country_points = new float[points.getRowCount()*2];
 		for(TableRow row : points.rows())
 		{
-			country_points[i++] = row.getFloat(0);
-			country_points[i++] = row.getFloat(1);
+			country_points[i++] = radians(row.getFloat(0));
+			country_points[i++] = radians(row.getFloat(1));
 		}
 
 		i = 0;
@@ -27,8 +30,8 @@ class Planet
 		map_points = new float[points.getRowCount()*2];
 		for(TableRow row : points.rows())
 		{
-			map_points[i++] = row.getFloat(0);
-			map_points[i++] = row.getFloat(1);
+			map_points[i++] = radians(row.getFloat(0));
+			map_points[i++] = radians(row.getFloat(1));
 		}
 	}
 
@@ -37,23 +40,21 @@ class Planet
 		beginShape();
 		for(int i = 0 ; i < points.length; i+=2)
 		{
-			float px = points[i+0];
-			float py = points[i+1];
-			if (px == 0 && py == 0)
+			float lon = points[i+0];
+			float lat = points[i+1];
+			if (lat == 0 && lon == 0)
 			{
 				endShape();
 				beginShape();
 				continue;
 			}
 
-			float lon = radians(px);
-			float lat = radians(py);
-
-			// project n,e into x,y,z
+			// project n,e into x,y,z,
+			// remembering that processing has a left hand frame
 			float x = radius * cos(lat)*cos(lon);
-			float z = radius * cos(lat)*sin(lon);
-			float y = radius * sin(lat);
-			vertex(x,y,z);
+			float y = radius * cos(lat)*sin(lon);
+			float z = radius * sin(lat);
+			vertex(x,-y,z);
 		}
 
 		endShape();
@@ -64,9 +65,12 @@ class Planet
 	{
 		pushStyle();
 
-		fill(0,0,0,1);
-		stroke(50,50,50,100);
+		fill(0,0,0);
+		stroke(30,30,30);
+		pushMatrix();
+		rotateX(PI/2); // put the poles on the poles
 		sphere(radius-3);
+		popMatrix();
 
 		noFill();
 		stroke(255,255,255,80);

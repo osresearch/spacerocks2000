@@ -12,6 +12,7 @@ final float dt = 1.0 / 25;
 float radius = 1000;
 Planet planet;
 SpherePoint ship;
+boolean easy = true;
 
 Asteroid asteroids[];
 
@@ -19,7 +20,9 @@ void setup()
 {
 	planet = new Planet();
 	ship = new SpherePoint();
-	ship.v = new PVector(0,1,1).normalize();
+	ship.p = new PVector(1,0,0).normalize();
+	ship.v = new PVector(0,-1,0).normalize();
+	ship.vel = 0.1;
 
 	asteroids = new Asteroid[8];
 	for(int i = 0 ; i < 8 ; i++)
@@ -47,13 +50,21 @@ void keyPressed()
 {
 	if (key == CODED) {
 		if (keyCode == UP)
-			thrust = 0.1;
+			thrust = 0.5;
 		if (keyCode == DOWN)
-			thrust = -0.05;
+			thrust = -0.25;
 		if (keyCode == LEFT)
-			rcu = -0.5;
+			rcu = -0.95;
 		if (keyCode == RIGHT)
-			rcu = +0.5;
+			rcu = +0.95;
+	} else
+	if (key == 'e') {
+		// toggle the rotation assist
+		easy = !easy;
+	} else
+	if (key == 'z') {
+		// space brakes
+		ship.vel = 0;
 	} else
 	if (key == ' ') {
 		// fire a space bullet?
@@ -66,19 +77,20 @@ void keyPressed()
 void keyReleased()
 {
 	if (key == CODED) {
-		if (keyCode == UP)
+		if (keyCode == UP || keyCode == DOWN)
+		{
 			thrust = 0;
-		if (keyCode == DOWN)
-			thrust = 0;
-		if (keyCode == LEFT)
+		}
+
+		if (keyCode == LEFT || keyCode == RIGHT)
+		{
 			rcu = 0;
-		if (keyCode == RIGHT)
-			rcu = 0;
+			if (easy)
+				psi_rate = 0;
+		}
 	}
 }
 
-float x_angle;
-float z_angle;
 
 void draw()
 {
@@ -94,21 +106,61 @@ void draw()
 	asteroids_write("SpaceRocks 2000", -400, -400, 3.0);
 	popMatrix();
 
+	// set the camera to be looking at the planet
+	// from off in the X axis.  Our "UP" is in the direction
+	// the ship is facing, which is a product of the current
+	// velocity vector and our heading relative to it.
+	// note that there is an absurd left hand reference frame
+	PVector vel_up = ship.p.cross(ship.v);
+	PVector up = vectorRotate(vel_up, ship.p, psi);
+
 	// Update our ship position
 	psi_rate += rcu * dt;
 	psi += psi_rate * dt;
-	ship.vel += thrust * dt;
-	ship.update(dt);
+	if (psi > PI)
+		psi -= 2*PI;
+	else
+	if (psi < -PI)
+		psi += 2*PI;
 
-	// set the camera to be looking at the planet
-	// from off in the X axis
-	PVector vel_up = ship.p.cross(ship.v);
-	PVector up = vectorRotate(vel_up, ship.p, psi);
+	if (thrust != 0)
+	{
+		// we are thrusting, so adjust the velocity component
+		// by computing the current tangental velocity, applying
+		// the acceleration due to thrust, then convert back
+		// to a perpendicular great circle.
+		// there might be a better way...
+		PVector vel_dir = ship.v.cross(ship.p).normalize();
+		PVector acc_dir = vectorRotate(vel_dir, ship.p, psi);
+		PVector vel = PVector.mult(vel_dir, ship.vel);
+		PVector acc = PVector.mult(acc_dir, thrust*dt);
+
+		// add the angled thrust to our velocity
+		// and compute the magnitude of it.
+		vel.add(acc);
+		ship.vel = vel.mag();
+
+		// if the velocity is too close to zero,
+		// which ever way we were is fine
+		// otherwise if our psi was negative, use the negative
+		// direction between the angles
+		if (abs(ship.vel) > 0.001)
+		{
+			ship.v = ship.p.cross(vel).normalize();
+			PVector new_vel_dir = ship.v.cross(ship.p).normalize();
+			float new_psi = vectorAngle(acc_dir, new_vel_dir);
+			if (psi < 0)
+				new_psi = -new_psi;
+			psi = new_psi;
+		}
+	}
+
+	ship.update(dt);
 
 	camera(
 		1.5*radius*ship.p.x,
 		1.5*radius*ship.p.y,
-		1.5*radius*ship.p.z,
+		1.5*radius*ship.p.z, // stupid left hand reference frame
 		0,
 		0,
 		0,
@@ -116,6 +168,7 @@ void draw()
 		up.y,
 		up.z
 	);
+	//scale(1,1,-1); // make this right hand
 
 /*
 	// draw the ship
@@ -144,13 +197,39 @@ void draw()
 	// draw the "ship" based on our XYZ position to track errors
 	noStroke();
 	fill(255,0,0,255);
+
+	pushMatrix();
 	PVector p = PVector.mult(ship.p, radius);
 	translate(p.x, p.y, p.z);
 	sphere(15);
-	
 	popMatrix();
 
+	pushMatrix();
+	p = PVector.mult(ship.predict(1), radius);
+	translate(p.x, p.y, p.z);
+	sphere(5);
+	popMatrix();
 
+	popMatrix();
+
+	// draw an axis to help us
+	pushMatrix();
+	fill(255,0,0,255);
+	translate(250,0,0);
+	box(500,10,10);
+	popMatrix();
+
+	pushMatrix();
+	fill(0,255,0,255);
+	translate(0,250,0);
+	box(10,500,10);
+	popMatrix();
+
+	pushMatrix();
+	fill(0,0,255,255);
+	translate(0,0,250);
+	box(10,10,500);
+	popMatrix();
 	
 /*
 	asteroids_write("abcdefghijklm", -300, -150, 3.0);
