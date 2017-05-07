@@ -69,7 +69,7 @@ void keyPressed()
 	} else
 	if (key == 'z') {
 		// space brakes
-		ship.vel = 0;
+		ship.p.vel = 0;
 	} else
 	if (key == ' ') {
 		ship.fire();
@@ -115,8 +115,11 @@ void draw()
 	if (ship.dead != 0)
 	{
 		if (now - ship.dead > 1000)
+		{
 			ship.dead = 0;
-		ship.vel = 0;
+			ship.p.vel = 0;
+			ship.health = 100;
+		}
 	}
 
 	// check for still lives
