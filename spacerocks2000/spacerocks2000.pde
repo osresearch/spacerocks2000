@@ -9,7 +9,7 @@
  */
 
 final float dt = 1.0 / 25;
-float radius = 1000;
+float radius = 900;
 Planet planet;
 
 SpherePoint ship;
