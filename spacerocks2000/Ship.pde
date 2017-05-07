@@ -222,14 +222,14 @@ class Ship
 		bullets.add(b);
 	}
 
-	boolean collide(PVector pos, float size)
+	boolean collide(PVector pos, float size, float damage)
 	{
 		// check for a ship collision
 		float dist = PVector.sub(pos, p.p).mag();
 		if (dist < size * 4 && dead == 0)
 		{
 			// subtract a few health points
-			health -= 30;
+			health -= (int) damage;
 			if (health > 0)
 				return true;
 

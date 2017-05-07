@@ -13,6 +13,7 @@ float radius = 900;
 Planet planet;
 
 Ship ship;
+Rocket rocket;
 
 boolean easy = true;
 int starting_asteroids = 10;
@@ -86,6 +87,9 @@ void keyPressed()
 	} else
 	if (key == 'r') {
 		restart();
+	} else
+	if (key == 'p') {
+		rocket = new Rocket();
 	} else
 	if (key == ' ') {
 		ship.fire();
@@ -260,7 +264,7 @@ void draw()
 		a.update(dt);
 		a.display(radius);
 
-		if (!ship.collide(a.p.p, a.size/radius))
+		if (!ship.collide(a.p.p, a.size/radius, a.size))
 			continue;
 
 		// this was hit by a bullet or the ship
@@ -315,12 +319,45 @@ void draw()
 			satellites.remove(i);
 	}
 
+	rocket_update();
+
 	ship.display(radius);
 
 	popMatrix();
 }
 
 
+void rocket_update()
+{
+	if (rocket == null)
+		return;
+
+	// if the rocket has expired, delete it
+	if (!rocket.update(dt, ship.p.p))
+	{
+		rocket = null;
+		return;
+	}
+
+	// see if the rocket has been shot down, although it is hard
+	for(Bullet b : ship.bullets)
+	{
+		if (!b.collide(rocket.p.p, 4/radius))
+			continue;
+		rocket = null;
+		return;
+	}
+
+
+	// if the rocket hits the ship, delete it
+	if (ship.collide(rocket.p.p, 10/radius, 100))
+	{
+		rocket = null;
+		return;
+	}
+
+	rocket.display(radius);
+}
 
 /*
 void draw_axis(void)
