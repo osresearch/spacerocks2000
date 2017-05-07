@@ -11,7 +11,7 @@ class Bullet
 		creation = millis();
 
 		p = new SpherePoint();
-		p.vel = 2;
+		p.vel = 2.5;
 		p.p = initial.p.copy();
 		PVector vel_dir = initial.v.cross(initial.p).normalize();
 		PVector acc_dir = vectorRotate(vel_dir, initial.p, psi);
