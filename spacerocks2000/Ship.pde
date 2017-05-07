@@ -212,7 +212,7 @@ class Ship
 	void fire()
 	{
 		int now = millis();
-		if (now - last_fire_ms < 200)
+		if (now - last_fire_ms < 250)
 			return;
 
 		last_fire_ms = now;
@@ -246,10 +246,8 @@ class Ship
 		for (int j = bullets.size() - 1; j >= 0; j--)
 		{
 			Bullet b = bullets.get(j);
-			dist = PVector.sub(pos, b.p.p).mag();
-			if (dist > size * 6)
+			if (!b.collide(pos, size))
 				continue;
-
 			// close enough
 			bullets.remove(j);
 			return true;
