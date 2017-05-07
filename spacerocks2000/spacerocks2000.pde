@@ -185,7 +185,18 @@ void draw()
 			rocket = new Rocket();
 	}
 
+	if (satellites.size() == 0)
+	{
+		// occasionally launch a new satellite for them
+		// if they have lost all of theirs
+		if (random(0,1000) < 1)
+			satellites.add(new Satellite());
+	}
+
 	// draw the delta-v remaining
+	if (healing)
+		stroke(0, 255, 0, 255);
+	else
 	if (ship.delta_v < 100)
 		stroke(255, 0, 0, 255);
 	else
@@ -194,7 +205,7 @@ void draw()
 	else
 		stroke(100, 100, 255, 255);
 
-	asteroids_write("Delta-V " + str(ship.delta_v), 100, 170, 2.0);
+	asteroids_write("Delta-V " + str((int) ship.delta_v), 100, 170, 2.0);
 
 	if (healing)
 		stroke(0, 255, 0, 255);
@@ -305,6 +316,7 @@ void draw()
 	}
 
 	// update the satellite positions
+	healing = false;
 	for (int i = satellites.size() - 1; i >= 0; i--)
 	{
 		Satellite s = satellites.get(i);
@@ -314,14 +326,14 @@ void draw()
 
 		// increase ship health if it is around the satellite
 		float dist = PVector.sub(s.p.p, ship.p.p).mag();
-		if (dist < 0.2 && ship.health < 100)
+		if (dist < 0.2)
 		{
 			if (dist < 0.01) dist = 0.01;
 
+			if (ship.health < 100)
+				ship.health += 0.01 / dist;
+			ship.delta_v += 0.1 / dist;
 			healing = true;
-			ship.health += 0.01 / dist;
-		} else {
-			healing = false;
 		}
 
 		// check for asteroids wiping out the satellite
@@ -374,7 +386,7 @@ void rocket_update()
 	// see if the rocket has been shot down, although it is hard
 	for(Bullet b : ship.bullets)
 	{
-		if (!b.collide(rocket.p.p, 4/radius))
+		if (!b.collide(rocket.p.p, 0.1/radius))
 			continue;
 		rocket = null;
 		return;

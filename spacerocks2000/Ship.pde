@@ -7,7 +7,7 @@ class Ship
 	int dead;
 	int lives;
 	float health;
-	int delta_v;
+	float delta_v;
 
 	SpherePoint p;
 	float psi; // heading angle relative to the velocity great circle
@@ -147,20 +147,63 @@ class Ship
 		vertex(0,50,0);
 		endShape();
 
+		// thrusters
+		stroke(255,0,0,100);
+
+		// if we are using the rcu
+		if (dead != 0)
+		{
+			// no rcu
+		} else
+		if (rcu > 0)
+		{
+			beginShape();
+			vertex(+8,30);
+			vertex(+25,25);
+			vertex(+12,20);
+			vertex(+8,30);
+			endShape();
+		} else
+		if (rcu < 0)
+		{
+			beginShape();
+			vertex(-8,30);
+			vertex(-25,25);
+			vertex(-12,20);
+			vertex(-8,30);
+			endShape();
+		}
+
 		// if we have delta_v and are thrusting, draw
 		// a little plume
-		if (thrust != 0 && delta_v > 0 && dead == 0)
+		if (delta_v > 0 && dead == 0)
 		{
-			stroke(255,0,0,100);
-			beginShape();
-			vertex(0,-2);
-			vertex(-10,-12);
-			vertex(-5,-30);
-			vertex(0,-20);
-			vertex(+5,-30);
-			vertex(+10,-12);
-			vertex(0,-2);
-			endShape();
+			if (thrust > 0)
+			{
+				// main rocket
+				beginShape();
+				vertex(0,-2);
+				vertex(-10,-12);
+				vertex(-5,-30);
+				vertex(0,-20);
+				vertex(+5,-30);
+				vertex(+10,-12);
+				vertex(0,-2);
+				endShape();
+			} else
+			if (thrust < 0)
+			{
+				// retro rocket
+				beginShape();
+				vertex(0,50);
+				vertex(-4,30);
+				vertex(-8,60);
+				vertex(0,55);
+				vertex(+8,60);
+				vertex(+4,30);
+				vertex(0,50);
+				endShape();
+			}
 		}
 
 		// draw a "health" meter with a line for each ten points
@@ -213,6 +256,8 @@ class Ship
 	{
 		int now = millis();
 		if (now - last_fire_ms < 250)
+			return;
+		if (dead != 0)
 			return;
 
 		last_fire_ms = now;
