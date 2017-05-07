@@ -170,6 +170,15 @@ void draw()
 		popMatrix();
 	}
 
+	if (rocket != null)
+	{
+		pushMatrix();
+		stroke(255, 0, 0, 255);
+		translate(width/2,height/2,height/2);
+		asteroids_write("DANGER! ROCKET!", -250, -200, 3);
+		popMatrix();
+	}
+
 	// draw the delta-v remaining
 	if (ship.delta_v < 100)
 		stroke(255, 0, 0, 255);
