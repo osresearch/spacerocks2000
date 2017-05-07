@@ -6,7 +6,8 @@ class Ship
 {
 	int dead;
 	int lives;
-	float health;
+	int health;
+	int delta_v;
 
 	SpherePoint p;
 	float psi; // heading angle relative to the velocity great circle
@@ -37,6 +38,7 @@ class Ship
 		dead = 0;
 		thrust = 0;
 		health = 100;
+		delta_v = 999;
 	}
 
 	void update(float dt)
@@ -67,7 +69,7 @@ class Ship
 		if (psi < -PI)
 			psi += 2*PI;
 
-		if (thrust != 0)
+		if (thrust != 0 && delta_v > 0)
 		{
 			// we are thrusting, so adjust the velocity component
 			// by computing the current tangental velocity, applying
@@ -87,6 +89,9 @@ class Ship
 			// limit the max velocity
 			if (p.vel > 2)
 				p.vel = 2;
+
+			// expend some delta_v for thrust
+			delta_v--;
 
 			// if the velocity is too close to zero,
 			// which ever way we were is fine
@@ -141,6 +146,22 @@ class Ship
 		vertex(+20,-20,0);
 		vertex(0,50,0);
 		endShape();
+
+		// if we have delta_v and are thrusting, draw
+		// a little plume
+		if (thrust != 0 && delta_v > 0 && dead == 0)
+		{
+			stroke(255,0,0,100);
+			beginShape();
+			vertex(0,-2);
+			vertex(-10,-12);
+			vertex(-5,-30);
+			vertex(0,-20);
+			vertex(+5,-30);
+			vertex(+10,-12);
+			vertex(0,-2);
+			endShape();
+		}
 
 		// draw a "health" meter with a line for each ten points
 		stroke(100,100,100,255);

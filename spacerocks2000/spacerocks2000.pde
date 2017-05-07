@@ -68,8 +68,15 @@ void keyPressed()
 		easy = !easy;
 	} else
 	if (key == 'z') {
-		// space brakes
-		ship.p.vel = 0;
+		// space brakes cost delta_v
+		if(ship.delta_v >= 50)
+		{
+			ship.p.vel = 0;
+			ship.delta_v -= 50;
+		}
+	} else
+	if (key == 'r') {
+		restart();
 	} else
 	if (key == ' ') {
 		ship.fire();
@@ -150,6 +157,26 @@ void draw()
 		popMatrix();
 	}
 
+	// draw the delta-v remaining
+	if (ship.delta_v < 100)
+		stroke(255, 0, 0, 255);
+	else
+	if (ship.delta_v < 300)
+		stroke(200, 200, 0, 255);
+	else
+		stroke(100, 100, 255, 255);
+
+	asteroids_write("Delta-V " + str(ship.delta_v), 100, 170, 2.0);
+
+	if (ship.health < 10) stroke(255, 0, 0, 255);
+	else
+	if (ship.health < 30)
+		stroke(200, 200, 0, 255);
+	else
+		stroke(100, 100, 255, 255);
+
+	asteroids_write("Shield  " + str(ship.health), 100, 200, 2.0);
+
 	// update asteroid chart
 	int count[] = { 0, 0, 0, 0 };
 	for (Asteroid a : asteroids)
@@ -160,6 +187,7 @@ void draw()
 		count[bin]++;
 	}
 
+	stroke(100, 100, 255, 255);
 	Asteroid atmp = new Asteroid();
 	for(int bin = 0 ; bin < 4 ; bin++)
 	{
