@@ -9,7 +9,7 @@ Todo:
 * Scoring: points for smaller asteroids?
 * Joystick interface
 * Hyperspace? (and possible destruction)
-* Sound
+* Sound (in progress)
 * Aliens
 
 Done:
@@ -21,6 +21,7 @@ Done:
 * Delta-V: can the ship run out and require a resupply?
 * Satellites: prevent asteroids from destroying them
 * ICBM launches to be shot down
+* Level up
 
 Country data
 ===
