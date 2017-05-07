@@ -37,12 +37,13 @@ void setup()
 
 	asteroids = new ArrayList<Asteroid>();
 
-	for(int i = 0 ; i < 1 ; i++)
+	for(int i = 0 ; i < 5 ; i++)
 	{
 		asteroids.add(new Asteroid());
 	}
 
 	size(2000, 1125, P3D);
+	//fullScreen(P3D);
 	surface.setResizable(true);
 
 	blendMode(ADD);
@@ -109,6 +110,7 @@ void keyReleased()
 void draw()
 {
 	final int now = millis();
+	radius = width/2;
 
 	background(0);
 	pushMatrix();
@@ -217,13 +219,13 @@ void draw()
 		asteroids.remove(i);
 
 		// if this was a small one, do not spawn any new ones
-		if (a.size < 5)
+		if (a.size < 10)
 			continue;
 
 		// split it into a few
 		for(int j = 0 ; j < 3 ; j++)
 		{
-			float sz = random(3,a.size/2);
+			float sz = random(5,a.size/2);
 
 			Asteroid na = new Asteroid(a.p.p, sz);
 			na.display(radius);
@@ -262,11 +264,6 @@ boolean bullet_collision(Asteroid a)
 			continue;
 
 		// close enough
-		System.out.print("hit! ");
-		System.out.print(a.p.p);
-		System.out.print(" ");
-		System.out.print(b.p.p);
-		System.out.println();
 		bullets.remove(j);
 		return true;
 	}
@@ -316,15 +313,6 @@ void draw_ship(float radius)
 		vertex(p.x, p.y, p.z);
 	}
 	endShape();
-
-/*
-	pushMatrix();
-	stroke(100,100,200,200);
-	p = PVector.mult(ship.predict(1.0), radius+10);
-	translate(p.x, p.y, p.z);
-	//box(10);
-	popMatrix();
-*/
 }
 
 
