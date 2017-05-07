@@ -286,6 +286,7 @@ void draw()
 	// the camera is already in the ship position,
 	// so the planet is drawn in ECEF frame
 	planet.display(radius);
+	ship.display(radius);
 
 	// update the asteroid positions
 	for (int i = asteroids.size() - 1; i >= 0; i--)
@@ -365,8 +366,6 @@ void draw()
 
 	rocket_update();
 
-	ship.display(radius);
-
 	popMatrix();
 }
 
@@ -382,6 +381,8 @@ void rocket_update()
 		rocket = null;
 		return;
 	}
+
+	rocket.display(radius);
 
 	// see if the rocket has been shot down, although it is hard
 	for(Bullet b : ship.bullets)
@@ -399,8 +400,6 @@ void rocket_update()
 		rocket = null;
 		return;
 	}
-
-	rocket.display(radius);
 }
 
 /*
