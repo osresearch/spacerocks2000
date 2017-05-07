@@ -195,7 +195,7 @@ void draw()
 		popMatrix();
 
 		if (now > ship.dead)
-			restart();
+			restart_full();
 	}
 	for(int i = 1 ; i < ship.lives+1 ; i++)
 	{
