@@ -50,7 +50,7 @@ void setup()
 	ship.p = new PVector(1,0,0).normalize();
 	ship.v = new PVector(0,-1,0).normalize();
 
-	size(2840, 1400, P3D);
+	size(2560, 1400, P3D);
 	//fullScreen(P3D);
 	surface.setResizable(true);
 
