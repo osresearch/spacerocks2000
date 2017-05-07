@@ -6,12 +6,12 @@ class Ship
 {
 	int dead;
 	int lives;
+	float health;
 
 	SpherePoint p;
 	float psi; // heading angle relative to the velocity great circle
 	float psi_rate = 0;
 
-	float vel;
 	float thrust = 0;
 	float rcu = 0;
 
@@ -32,10 +32,11 @@ class Ship
 		bullets = new ArrayList<Bullet>();
 
 		psi_rate = 0;
-		vel = 0.1;
+		p.vel = 0.1;
 		lives = 3;
 		dead = 0;
 		thrust = 0;
+		health = 100;
 	}
 
 	void update(float dt)
@@ -86,7 +87,6 @@ class Ship
 			// limit the max velocity
 			if (p.vel > 2)
 				p.vel = 2;
-			System.out.println(p.vel);
 
 			// if the velocity is too close to zero,
 			// which ever way we were is fine
@@ -132,6 +132,7 @@ class Ship
 		else
 			stroke(255,0,0,255);
 			
+		// draw the outline of the ship
 		noFill();
 		beginShape();
 		vertex(0,50,0);
@@ -140,6 +141,13 @@ class Ship
 		vertex(+20,-20,0);
 		vertex(0,50,0);
 		endShape();
+
+		// draw a "health" meter with a line for each ten points
+		stroke(100,100,100,255);
+		for(int i = 0 ; i < health ; i += 25)
+		{
+			line(-10+i/20, i/4+4, +10-i/20, i/4+4);
+		}
 
 		popMatrix();
 
@@ -199,6 +207,13 @@ class Ship
 		float dist = PVector.sub(pos, p.p).mag();
 		if (dist < size * 4 && dead == 0)
 		{
+			// subtract a few health points
+			health -= 30;
+			if (health > 0)
+				return true;
+
+			// we've run out of health
+			health = 0;
 			dead = millis() + 1000;
 			if (--lives == 0)
 				dead += 5000;
