@@ -9,6 +9,7 @@ class Ship
 	float health;
 	float delta_v;
 
+
 	SpherePoint p;
 	float psi; // heading angle relative to the velocity great circle
 	float psi_rate = 0;
@@ -24,7 +25,7 @@ class Ship
 		p = new SpherePoint();
 		p.p = new PVector(1,0,0).normalize();
 		//p.v = new PVector(0,-1,0).normalize();
-		p.v = new PVector(0,-1,-0.2).normalize();
+		p.v = new PVector(0,-1,-2.2).normalize();
 
 		restart();
 	}
@@ -262,6 +263,7 @@ class Ship
 			return;
 
 		last_fire_ms = now;
+		//fire_sound.play();
 
 		// fire a space bullet, lined up with current direction
 		Bullet b = new Bullet(p, psi);

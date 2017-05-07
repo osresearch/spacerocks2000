@@ -21,6 +21,10 @@ boolean easy = true;
 int starting_asteroids = 10;
 int starting_satellites = 4;
 
+//import processing.sound.*;
+//SoundFile fire_sound, thrust_sound, boom_sound, rocket_sound, heal_sound;
+//boolean heal_sound_playing = false;
+//boolean rocket_sound_playing = false;
 
 ArrayList<Asteroid> asteroids;
 ArrayList<Satellite> satellites;
@@ -44,8 +48,14 @@ void restart()
 void setup()
 {
 	planet = new Planet();
-
 	ship = new Ship();
+/*
+	fire_sound = new SoundFile(this, "fire.wav");
+ 	thrust_sound = new SoundFile(this, "thrust.wav");
+ 	boom_sound = new SoundFile(this, "bangLarge.wav");
+ 	rocket_sound = new SoundFile(this, "saucerBig.wav");
+ 	heal_sound = new SoundFile(this, "beat1.wav");
+*/
 
 	size(2560, 1400, P3D);
 	//fullScreen(P3D);
@@ -71,9 +81,15 @@ void keyPressed()
 
 	if (key == CODED) {
 		if (keyCode == UP)
+		{
 			ship.thrust = 0.5;
+			//thrust_sound.loop();
+		}
 		if (keyCode == DOWN)
+		{
 			ship.thrust = -0.25;
+			//thrust_sound.loop();
+		}
 		if (keyCode == LEFT)
 			ship.rcu = -10;
 		if (keyCode == RIGHT)
@@ -114,6 +130,7 @@ void keyReleased()
 		if (keyCode == UP || keyCode == DOWN)
 		{
 			ship.thrust = 0;
+			//thrust_sound.stop();
 		}
 
 		if (keyCode == LEFT || keyCode == RIGHT)
@@ -139,23 +156,7 @@ void draw()
 	// draw any overlays
 	if (attract)
 	{
-		pushMatrix();
-		translate(width/2,height/2,height/2);
-		stroke(100, 0, 0, 255);
-		asteroids_write("SpaceRocks", -450, -80, 8.0);
-		asteroids_write("2000", -180, 50, 8.0);
-
-		translate(-5,+5,0);
-		stroke(100, 100, 200, 255);
-		asteroids_write("SpaceRocks", -450, -80, 8.0);
-		asteroids_write("2000", -180, 50, 8.0);
-
-		stroke(255, 255, 255, 255);
-		translate(-5,+5,0);
-		asteroids_write("SpaceRocks", -450, -80, 8.0);
-		asteroids_write("2000", -180, 50, 8.0);
-
-		popMatrix();
+		draw_attract_flat();
 	} else {
 		stroke(100, 100, 200, 255);
 		asteroids_write("SpaceRocks 2000", 100, 100, 3.0);
@@ -222,6 +223,19 @@ void draw()
 	}
 
 	// draw the delta-v remaining
+/*
+	if (heal_sound_playing && !healing)
+	{
+		heal_sound.stop();
+		heal_sound_playing = false;
+	} else
+	if (!heal_sound_playing && healing)
+	{
+		heal_sound.play();
+		heal_sound_playing = true;
+	}
+*/
+
 	if (healing)
 		stroke(0, 255, 0, 255);
 	else
@@ -316,6 +330,9 @@ void draw()
 	planet.display(radius);
 	ship.display(radius);
 
+	if (attract)
+		draw_attract_planet(radius);
+
 	// update the asteroid positions
 	for (int i = asteroids.size() - 1; i >= 0; i--)
 	{
@@ -330,6 +347,7 @@ void draw()
 
 		// this was hit by a bullet or the ship
 		asteroids.remove(i);
+		//boom_sound.play();
 
 		// if this was a small one, do not spawn any new ones
 		if (a.size < 10)
@@ -402,8 +420,22 @@ void draw()
 
 void rocket_update()
 {
+/*
+	if (!rocket_sound_playing && rocket != null)
+	{
+		rocket_sound.loop();
+		rocket_sound_playing = true;
+	} else
+	if (rocket_sound_playing && rocket == null)
+	{
+		rocket_sound.stop();
+		rocket_sound_playing = false;
+	}
+*/
+
 	if (rocket == null)
 		return;
+
 
 	// if the rocket has expired, delete it
 	if (!rocket.update(dt, ship.p.p))
@@ -433,30 +465,6 @@ void rocket_update()
 }
 
 /*
-void draw_axis(void)
-{
-	// draw an axis to help us
-	pushMatrix();
-	fill(255,0,0,255);
-	translate(250,0,0);
-	box(500,10,10);
-	popMatrix();
-
-	pushMatrix();
-	fill(0,255,0,255);
-	translate(0,250,0);
-	box(10,500,10);
-	popMatrix();
-
-	pushMatrix();
-	fill(0,0,255,255);
-	translate(0,0,250);
-	box(10,10,500);
-	popMatrix();
-}
-*/
-	
-/*
 	asteroids_write("abcdefghijklm", -300, -150, 3.0);
 	asteroids_write("nopqrstuvwxyz", -300, -100, 3.0);
 	asteroids_write("`0123456789-=", -300, -50, 3.0);
@@ -464,3 +472,75 @@ void draw_axis(void)
 	asteroids_write("[]\\;',./", -300, 50, 3.0);
 	asteroids_write("{}|:\"<>?", -300, 100, 3.0);
 */
+
+
+// large "SPACEROCKS 2000" cicling the planet
+void draw_attract_flat()
+{
+	pushMatrix();
+	translate(width/2,height/2,height/2);
+
+	stroke(255, 255, 255, 255);
+	asteroids_write("https://trmm.net/SR2k", -width/5, -height/5+20, 1);
+
+/*
+	stroke(100, 0, 0, 200);
+	asteroids_write("SpaceRocks", -450, -80, 8.0);
+	asteroids_write("2000", -180, 50, 8.0);
+
+	translate(-5,-5,0);
+*/
+	asteroids_write("SpaceRocks", -270, -80, 4.0);
+	asteroids_write("2000", -180, 50, 6.0);
+
+	stroke(255, 0, 0, 100);
+	translate(+2,+2,0);
+	asteroids_write("SpaceRocks", -270, -80, 4.0);
+	asteroids_write("2000", -180, 50, 6.0);
+
+	popMatrix();
+}
+
+void draw_attract_planet(float radius)
+{
+	String title = " Spacerocks 2000  Spacerocks 2000  Spacerocks 2000 ";
+	int len = title.length();
+	float spacing = 2 * PI / len;
+
+
+	pushMatrix();
+	rotateX(-PI/4);
+	rotateZ((millis() % 20000) * 2 * PI / 20000);
+
+	for(int i = 0 ; i < len-1 ; i++)
+	{
+
+		// rotate to create the local tangent plane for the lat/lon
+		rotateZ(spacing);
+		pushMatrix();
+		translate(radius+40, 0, 0);
+		rotateX(PI/2);
+		rotateY(PI/2);
+
+		//float lon = atan2(0, 1);
+		//float lat = asin(0);
+		//rotateZ(lon);
+		//rotateY(-lat);
+		//rotateX(angle);
+		
+		noFill();
+		stroke(255,255,255,255);
+		asteroids_write(title.substring(i,i+1), -50, -50, 18);
+		translate(0,0,-5);
+		stroke(0,0,255,255);
+		asteroids_write(title.substring(i,i+1), -50, -50, 18);
+/*
+		translate(0,0,-5);
+		stroke(255,0,0,255);
+		asteroids_write(title.substring(i,i+1), -50, -50, 18);
+*/
+		popMatrix();
+	}
+
+	popMatrix();
+}
