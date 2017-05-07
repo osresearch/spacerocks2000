@@ -6,6 +6,8 @@ class Asteroid
 	SpherePoint pos;
 	float path[];
 	float size;
+	float rate;
+	float angle;
 
 	Asteroid()
 	{
@@ -14,9 +16,14 @@ class Asteroid
 		pos.v = PVector.random3D().normalize().cross(pos.p).normalize();
 		//pos.v = new PVector(1,0,0).cross(pos.p);
 		pos.vel = 0.1;
-		size = 20;
+		size = random(10, 30);
+		rate = random(-0.5,0.5);
 
-		path = new float[]{
+		path = paths[(int)random(paths.length)];
+	}
+
+	final float paths[][] = {
+	{
                 -4, -2,
                 -4, +2,
                 -2, +4,
@@ -25,11 +32,8 @@ class Asteroid
                 +4, -2,
                  0, -4,
                 -4, -2,
-		};
-	}
-
-/*
-      {
+	},
+	{
                 -4, -2,
                 -4, +2,
                 -2, +4,
@@ -69,12 +73,13 @@ class Asteroid
                 +1, -4,
                 -4, -2,
         },
-*/
+	};
 
 
 	void update(float dt)
 	{
 		pos.update(dt);
+		angle += rate * dt;
 	}
 
 	void display(float radius)
@@ -90,7 +95,7 @@ class Asteroid
 		float lat = asin(pos.p.z / pos.p.mag());
 		rotateZ(lon);
 		rotateY(-lat);
-
+		rotateX(angle);
 		
 		noFill();
 		stroke(255,255,255,255);
