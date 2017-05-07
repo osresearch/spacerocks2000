@@ -15,6 +15,7 @@ Planet planet;
 Ship ship;
 Rocket rocket;
 
+boolean attract = true;
 boolean healing = false;
 boolean easy = true;
 int starting_asteroids = 10;
@@ -37,6 +38,7 @@ void restart()
 		satellites.add(new Satellite());
 
 	ship.restart();
+	attract = true;
 }
 
 void setup()
@@ -61,6 +63,11 @@ void setup()
 void keyPressed()
 {
 	int now = millis();
+	if (attract)
+	{
+		attract = false;
+		return;
+	}
 
 	if (key == CODED) {
 		if (keyCode == UP)
@@ -130,8 +137,29 @@ void draw()
 	ambientLight(255,255,255);
 
 	// draw any overlays
-	stroke(100, 100, 200, 255);
-	asteroids_write("SpaceRocks 2000", 100, 100, 3.0);
+	if (attract)
+	{
+		pushMatrix();
+		translate(width/2,height/2,height/2);
+		stroke(100, 0, 0, 255);
+		asteroids_write("SpaceRocks", -450, -80, 8.0);
+		asteroids_write("2000", -180, 50, 8.0);
+
+		translate(-5,+5,0);
+		stroke(100, 100, 200, 255);
+		asteroids_write("SpaceRocks", -450, -80, 8.0);
+		asteroids_write("2000", -180, 50, 8.0);
+
+		stroke(255, 255, 255, 255);
+		translate(-5,+5,0);
+		asteroids_write("SpaceRocks", -450, -80, 8.0);
+		asteroids_write("2000", -180, 50, 8.0);
+
+		popMatrix();
+	} else {
+		stroke(100, 100, 200, 255);
+		asteroids_write("SpaceRocks 2000", 100, 100, 3.0);
+	}
 
 	if (ship.dead != 0)
 	{
@@ -294,6 +322,8 @@ void draw()
 		Asteroid a = asteroids.get(i);
 		a.update(dt);
 		a.display(radius);
+		if (attract)
+			continue;
 
 		if (!ship.collide(a.p.p, a.size/radius, a.size))
 			continue;
@@ -360,7 +390,7 @@ void draw()
 			break;
 		}
 
-		if (dead)
+		if (dead && !attract)
 			satellites.remove(i);
 	}
 
@@ -395,7 +425,7 @@ void rocket_update()
 
 
 	// if the rocket hits the ship, delete it
-	if (ship.collide(rocket.p.p, 10/radius, 100))
+	if (ship.collide(rocket.p.p, 10/radius, attract ? 0 : 100))
 	{
 		rocket = null;
 		return;

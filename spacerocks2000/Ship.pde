@@ -23,7 +23,8 @@ class Ship
 	{
 		p = new SpherePoint();
 		p.p = new PVector(1,0,0).normalize();
-		p.v = new PVector(0,-1,0).normalize();
+		//p.v = new PVector(0,-1,0).normalize();
+		p.v = new PVector(0,-1,-0.2).normalize();
 
 		restart();
 	}
