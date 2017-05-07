@@ -110,15 +110,9 @@ class Asteroid
 			vertex(0,path[i+0]*size, path[i+1]*size);
 		endShape();
 
-/*
-		noStroke();
-		fill(255,255,255,255);
-		PVector p = PVector.mult(p.p, radius);
-		translate(p.x, p.y, p.z);
-		sphere(20);
-*/
 		popMatrix();
 
+/*
 		pushMatrix();
 		PVector next = p.predict(1).mult(radius);
 		translate(next.x, next.y, next.z);
@@ -126,6 +120,8 @@ class Asteroid
 		box(2);
 
 		popMatrix();
+*/
+
 		popStyle();
 	}
 };
