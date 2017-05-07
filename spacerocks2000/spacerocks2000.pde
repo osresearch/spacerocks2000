@@ -150,6 +150,30 @@ void draw()
 		popMatrix();
 	}
 
+	// update asteroid chart
+	int count[] = { 0, 0, 0, 0 };
+	for (Asteroid a : asteroids)
+	{
+		int bin = ((int)a.size / 5) - 1;
+		if (bin < 0) bin = 0;
+		if (bin > 3) bin = 3;
+		count[bin]++;
+	}
+
+	Asteroid atmp = new Asteroid();
+	for(int bin = 0 ; bin < 4 ; bin++)
+	{
+		asteroids_write(str(count[bin]), width-100, 200 + 40*bin, 2.0);
+		pushMatrix();
+		translate(width-150, 200 + 40*bin - 20);
+		beginShape();
+		float path[] = atmp.paths[bin];
+		for(int i = 0 ; i < path.length ; i += 2)
+			vertex((bin+1) * path[i+0], (bin+1) * path[i+1]);
+		endShape();
+		popMatrix();
+	}
+
 	// check for no asteroids
 	if (asteroids.size() == 0)
 	{
