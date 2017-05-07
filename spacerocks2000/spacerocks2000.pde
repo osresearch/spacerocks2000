@@ -185,7 +185,6 @@ void draw()
 
 void draw_ship(float radius)
 {
-	// draw the "ship" based on our XYZ position to track errors
 /*
 	pushMatrix();
 	noStroke();
@@ -196,25 +195,63 @@ void draw_ship(float radius)
 	popMatrix();
 */
 
-	// draw the ship
+	// move to the current position of the ship
 	pushMatrix();
 	PVector p = PVector.mult(ship.p, radius);
 	translate(p.x, p.y, p.z);
 
-	// how to flaten the perspective?
-	float lon = atan2(ship.p.y, ship.p.z);
-	float lat = asin(ship.p.z);
-	rotateY(-lat);
-	rotateZ(-lon);
+/*
 
-	stroke(255,255,255,255);
-	fill(255,255,255,100);
-	line(0,-50, -20,+20);
-	line(0,-50, +20,+20);
-	line(-20,+20, 0,+10);
-	line(+20,+20, 0,+10);
+	pushMatrix();
+	stroke(255,0,0,255);
+	noFill();
+	beginShape();
+	vertex(0,0,+50);
+	vertex(0,-20,-20);
+	vertex(0,0,+0);
+	vertex(0,+20,-20);
+	vertex(0,0,+50);
+	endShape();
 	popMatrix();
 
+	// the angle depends on the velocity great circle and
+	// the heading offset from that circle.  The "north" on
+	// the tangent plane is pointing towards (0,0,1) so we
+	// want to compute the angle between that and our ship
+	PVector pole_dir = new PVector(0,0,1).sub(ship.p);
+	PVector vel_dir = ship.v.cross(ship.p).normalize();
+	PVector acc_dir = vectorRotate(vel_dir, ship.p, psi);
+	float angle = vectorAngle(vel_dir, pole_dir);
+	rotateX(-angle);
+	//System.out.print(lon*180/PI);
+	//System.out.print(" ");
+	//System.out.print(lat*180/PI);
+	//System.out.println();
+*/
+	// instead of trying to produce a series of rotations,
+	// we can just use our own rotation matrix
+	PVector vel_dir = ship.v.cross(ship.p).normalize();
+	PVector acc_dir = vectorRotate(vel_dir, ship.p, psi);
+	PVector tan_dir = acc_dir.cross(ship.p).normalize();
+	applyMatrix(
+		tan_dir.x, acc_dir.x, ship.p.x, 0,
+		tan_dir.y, acc_dir.y, ship.p.y, 0,
+		tan_dir.z, acc_dir.z, ship.p.z, 0,
+		0, 0, 0, 1
+	);
+		
+
+	stroke(255,255,255,255);
+	noFill();
+	beginShape();
+	vertex(0,50,0);
+	vertex(-20,-20,0);
+	vertex(0,+0,0);
+	vertex(+20,-20,0);
+	vertex(0,50,0);
+	endShape();
+
+	popMatrix();
 
 	// project the next ten seconds
 	noFill();
