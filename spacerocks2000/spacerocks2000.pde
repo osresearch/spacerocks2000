@@ -19,7 +19,6 @@ float thrust = 0;
 float rcu = 0;
 float psi_rate = 0;
 float psi = 0;
-final int max_bullets = 16;
 int last_fire_ms = 0;
 
 
@@ -38,7 +37,7 @@ void setup()
 
 	asteroids = new ArrayList<Asteroid>();
 
-	for(int i = 0 ; i < 8 ; i++)
+	for(int i = 0 ; i < 1 ; i++)
 	{
 		asteroids.add(new Asteroid());
 	}
@@ -64,9 +63,9 @@ void keyPressed()
 		if (keyCode == DOWN)
 			thrust = -0.25;
 		if (keyCode == LEFT)
-			rcu = -1.5;
+			rcu = -2.5;
 		if (keyCode == RIGHT)
-			rcu = +1.5;
+			rcu = +2.5;
 	} else
 	if (key == 'e') {
 		// toggle the rotation assist
@@ -117,7 +116,19 @@ void draw()
 	ambientLight(255,255,255);
 
 	// draw any overlays
+	stroke(100, 100, 200, 255);
 	asteroids_write("SpaceRocks 2000", 100, 100, 3.0);
+
+	// check for no asteroids
+	if (asteroids.size() == 0)
+	{
+		pushMatrix();
+		stroke(255, 255, 0, 255);
+		translate(width/2,height/2,height/2);
+		asteroids_write("SUCCESS", -300, 0, 8);
+		popMatrix();
+	}
+
 
 	// set the camera to be looking at the planet
 	// from off in the X axis.  Our "UP" is in the direction
@@ -152,6 +163,10 @@ void draw()
 		// and compute the magnitude of it.
 		vel.add(acc);
 		ship.vel = vel.mag();
+
+		// limit the max velocity
+		if (ship.vel > 3)
+			ship.vel = 3;
 
 		// if the velocity is too close to zero,
 		// which ever way we were is fine
@@ -262,49 +277,11 @@ boolean bullet_collision(Asteroid a)
 
 void draw_ship(float radius)
 {
-/*
-	pushMatrix();
-	noStroke();
-	fill(255,0,0,255);
-	PVector p = PVector.mult(ship.p, radius);
-	translate(p.x, p.y, p.z);
-	sphere(15);
-	popMatrix();
-*/
-
 	// move to the current position of the ship
 	pushMatrix();
 	PVector p = PVector.mult(ship.p, radius);
 	translate(p.x, p.y, p.z);
 
-/*
-
-	pushMatrix();
-	stroke(255,0,0,255);
-	noFill();
-	beginShape();
-	vertex(0,0,+50);
-	vertex(0,-20,-20);
-	vertex(0,0,+0);
-	vertex(0,+20,-20);
-	vertex(0,0,+50);
-	endShape();
-	popMatrix();
-
-	// the angle depends on the velocity great circle and
-	// the heading offset from that circle.  The "north" on
-	// the tangent plane is pointing towards (0,0,1) so we
-	// want to compute the angle between that and our ship
-	PVector pole_dir = new PVector(0,0,1).sub(ship.p);
-	PVector vel_dir = ship.v.cross(ship.p).normalize();
-	PVector acc_dir = vectorRotate(vel_dir, ship.p, psi);
-	float angle = vectorAngle(vel_dir, pole_dir);
-	rotateX(-angle);
-	//System.out.print(lon*180/PI);
-	//System.out.print(" ");
-	//System.out.print(lat*180/PI);
-	//System.out.println();
-*/
 	// instead of trying to produce a series of rotations,
 	// we can just use our own rotation matrix
 	PVector vel_dir = ship.v.cross(ship.p).normalize();
@@ -317,7 +294,6 @@ void draw_ship(float radius)
 		0, 0, 0, 1
 	);
 		
-
 	stroke(255,255,255,255);
 	noFill();
 	beginShape();
@@ -333,7 +309,7 @@ void draw_ship(float radius)
 	// project the next ten seconds
 	noFill();
 	beginShape();
-	for(int i = 0 ; i < 12 ; i+=3)
+	for(int i = 0 ; i < 12 ; i+=1)
 	{
 		p = PVector.mult(ship.predict(i/10.0), radius+10);
 		stroke(100,100,200,200 - i * 20);
@@ -341,12 +317,14 @@ void draw_ship(float radius)
 	}
 	endShape();
 
+/*
 	pushMatrix();
 	stroke(100,100,200,200);
 	p = PVector.mult(ship.predict(1.0), radius+10);
 	translate(p.x, p.y, p.z);
-	box(10);
+	//box(10);
 	popMatrix();
+*/
 }
 
 

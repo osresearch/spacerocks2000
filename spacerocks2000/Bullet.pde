@@ -11,7 +11,7 @@ class Bullet
 		creation = millis();
 
 		p = new SpherePoint();
-		p.vel = 1;
+		p.vel = 2;
 		p.p = initial.p.copy();
 		PVector vel_dir = initial.v.cross(initial.p).normalize();
 		PVector acc_dir = vectorRotate(vel_dir, initial.p, psi);
@@ -21,7 +21,7 @@ class Bullet
 	boolean update(float dt)
 	{
 		p.update(dt);
-		if (millis() - creation > 5000)
+		if (millis() - creation > 2000)
 			return false;
 		return true;
 	}
@@ -34,7 +34,8 @@ class Bullet
 		stroke(0,0,255,255);
 		PVector pos = PVector.mult(p.p, radius+30);
 		translate(pos.x, pos.y, pos.z);
-		sphere(3);
+		//sphere(3);
+		box(10);
 		popMatrix();
 		popStyle();
 	}
