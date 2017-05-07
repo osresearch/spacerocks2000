@@ -42,6 +42,7 @@ class Satellite
 		
 		noFill();
 		stroke(0,0,255,255);
+/*
 		beginShape();
 		vertex(0,-5,-10);
 		vertex(0,-5,+10);
@@ -49,6 +50,8 @@ class Satellite
 		vertex(0,+5,-10);
 		vertex(0,-5,-10);
 		endShape();
+*/
+		box(5,5,20);
 		beginShape();
 		vertex(0,-10,0);
 		vertex(0,+10,0);
@@ -98,7 +101,8 @@ class Satellite
 		beginShape();
 		for(float dt = 0.5 ; dt < 10 ; dt += 1)
 		{
-			PVector np = p.predict(dt).mult(radius);
+			PVector np = p.predict(dt).mult(radius+30);
+			stroke(0,0,255,200 - dt*20);
 			vertex(np.x, np.y, np.z);
 		}
 		endShape();

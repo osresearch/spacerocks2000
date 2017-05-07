@@ -200,6 +200,7 @@ void draw()
 	}
 
 	stroke(100, 100, 255, 255);
+	stroke(100, 100, 100, 255);
 	Asteroid atmp = new Asteroid();
 	for(int bin = 0 ; bin < 4 ; bin++)
 	{

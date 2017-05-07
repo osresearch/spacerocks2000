@@ -43,7 +43,7 @@ class Bullet
 		beginShape();
 		for(float dt = -0.1 ; dt < 0.5 ; dt += 0.1)
 		{
-			PVector np = p.predict(-dt/10).mult(radius);
+			PVector np = p.predict(-dt/10).mult(radius+30);
 			vertex(np.x, np.y, np.z);
 		}
 		endShape();
