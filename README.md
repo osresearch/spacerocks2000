@@ -6,9 +6,7 @@ It is very much a work in progress.
 
 Todo:
 
-* Bullets
 * Satellites
-* Asteroids
 * Scoring
 * Delta-V
 * Joystick interface
