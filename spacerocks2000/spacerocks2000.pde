@@ -59,9 +59,9 @@ void keyPressed()
 		if (keyCode == DOWN)
 			ship.thrust = -0.25;
 		if (keyCode == LEFT)
-			ship.rcu = -2.5;
+			ship.rcu = -10;
 		if (keyCode == RIGHT)
-			ship.rcu = +2.5;
+			ship.rcu = +10;
 	} else
 	if (key == 'e') {
 		// toggle the rotation assist

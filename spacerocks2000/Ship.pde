@@ -54,11 +54,11 @@ class Ship
 
 		// Update our ship position
 		psi_rate += rcu * dt;
-		if (psi_rate > PI)
-			psi_rate = PI;
+		if (psi_rate > 3*PI)
+			psi_rate = 3*PI;
 		else
-		if (psi_rate < -PI)
-			psi_rate = -PI;
+		if (psi_rate < -3*PI)
+			psi_rate = -3*PI;
 
 		psi += psi_rate * dt;
 		if (psi > PI)
@@ -156,10 +156,10 @@ class Ship
 		{
 			noFill();
 			beginShape();
-			for(int i = 0 ; i < 20 ; i+=3)
+			for(int i = 2 ; i < 20 ; i+=3)
 			{
 				pos = PVector.mult(p.predict(i/10.0), radius+50);
-				stroke(100,100,200,200 - i * 10);
+				stroke(100,100,200,255 - i * 10);
 				vertex(pos.x, pos.y, pos.z);
 			}
 			endShape();
