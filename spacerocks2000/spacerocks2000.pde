@@ -15,6 +15,7 @@ Planet planet;
 Ship ship;
 Rocket rocket;
 
+boolean healing = false;
 boolean easy = true;
 int starting_asteroids = 10;
 int starting_satellites = 4;
@@ -195,14 +196,18 @@ void draw()
 
 	asteroids_write("Delta-V " + str(ship.delta_v), 100, 170, 2.0);
 
-	if (ship.health < 10) stroke(255, 0, 0, 255);
+	if (healing)
+		stroke(0, 255, 0, 255);
+	else
+	if (ship.health < 10)
+		stroke(255, 0, 0, 255);
 	else
 	if (ship.health < 30)
 		stroke(200, 200, 0, 255);
 	else
 		stroke(100, 100, 255, 255);
 
-	asteroids_write("Shield  " + str(ship.health), 100, 200, 2.0);
+	asteroids_write("Shield  " + str((int) ship.health), 100, 200, 2.0);
 
 	stroke(100, 100, 255, 255);
 	asteroids_write("SVs     " + str(satellites.size()), 100, 230, 2.0);
@@ -307,6 +312,19 @@ void draw()
 		s.display(radius);
 		boolean dead = false;
 
+		// increase ship health if it is around the satellite
+		float dist = PVector.sub(s.p.p, ship.p.p).mag();
+		if (dist < 0.2 && ship.health < 100)
+		{
+			if (dist < 0.01) dist = 0.01;
+
+			healing = true;
+			ship.health += 0.01 / dist;
+		} else {
+			healing = false;
+		}
+
+		// check for asteroids wiping out the satellite
 		for(Asteroid a : asteroids)
 		{
 			if (!s.collide(a.p.p, a.size/radius))

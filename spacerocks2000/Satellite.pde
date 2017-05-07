@@ -41,16 +41,12 @@ class Satellite
 		rotateX(angle);
 		
 		noFill();
+
+		// healing sphere
+		//stroke(0,255,0,40);
+		//sphere(0.2*radius);
+
 		stroke(0,0,255,255);
-/*
-		beginShape();
-		vertex(0,-5,-10);
-		vertex(0,-5,+10);
-		vertex(0,+5,+10);
-		vertex(0,+5,-10);
-		vertex(0,-5,-10);
-		endShape();
-*/
 		box(5,5,20);
 		beginShape();
 		vertex(0,-10,0);

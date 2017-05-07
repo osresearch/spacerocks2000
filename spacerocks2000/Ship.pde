@@ -6,7 +6,7 @@ class Ship
 {
 	int dead;
 	int lives;
-	int health;
+	float health;
 	int delta_v;
 
 	SpherePoint p;
@@ -229,7 +229,7 @@ class Ship
 		if (dist < size * 4 && dead == 0)
 		{
 			// subtract a few health points
-			health -= (int) damage;
+			health -= damage;
 			if (health > 0)
 				return true;
 
