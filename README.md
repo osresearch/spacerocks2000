@@ -6,14 +6,11 @@ It is very much a work in progress.
 
 Todo:
 
-* Satellites: prevent asteroids from destroying them
 * Scoring: points for smaller asteroids?
-* Delta-V: can the ship run out and require a resupply?
 * Joystick interface
 * Hyperspace? (and possible destruction)
 * Sound
 * Aliens
-* ICBM launches to be shot down
 
 Done:
 
@@ -21,6 +18,9 @@ Done:
 * Bullets
 * Ship counter
 * Win/lose screen
+* Delta-V: can the ship run out and require a resupply?
+* Satellites: prevent asteroids from destroying them
+* ICBM launches to be shot down
 
 Country data
 ===

@@ -40,16 +40,26 @@ class Rocket
 		PVector rp = PVector.mult(p.p, radius+30);
 		translate(rp.x, rp.y, rp.z);
 
-		// rotate to create the local tangent plane for the lat/lon
-		float lon = atan2(p.p.y, p.p.x);
-		float lat = asin(p.p.z / p.p.mag());
-		rotateZ(lon);
-		rotateY(-lat);
-		//rotateX(angle);
+		// instead of trying to produce a series of rotations,
+		// we can just use our own rotation matrix
+		PVector vel_dir = p.v.cross(p.p).normalize();
+		PVector tan_dir = vel_dir.cross(p.p).normalize();
+		applyMatrix(
+			tan_dir.x, vel_dir.x, p.p.x, 0,
+			tan_dir.y, vel_dir.y, p.p.y, 0,
+			tan_dir.z, vel_dir.z, p.p.z, 0,
+			0, 0, 0, 1
+		);
 		
 		noFill();
 		stroke(255,0,0,255);
-		box(10,10,50);
+		beginShape();
+		vertex(0,50,0);
+		vertex(-5,-10,0);
+		vertex(0,+0,0);
+		vertex(+5,-10,0);
+		vertex(0,50,0);
+		endShape();
 /*
 		beginShape();
 		vertex(0,-10,0);

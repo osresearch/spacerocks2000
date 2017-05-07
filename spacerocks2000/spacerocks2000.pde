@@ -177,6 +177,11 @@ void draw()
 		translate(width/2,height/2,height/2);
 		asteroids_write("DANGER! ROCKET!", -250, -200, 3);
 		popMatrix();
+	} else {
+		// random chance of rocket
+		// TODO: scale chance with level
+		if (random(0,1000) < 1)
+			rocket = new Rocket();
 	}
 
 	// draw the delta-v remaining
