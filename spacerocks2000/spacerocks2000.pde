@@ -13,14 +13,17 @@ float radius = 900;
 Planet planet;
 
 SpherePoint ship;
+ArrayList<Bullet> bullets;
 boolean easy = true;
 float thrust = 0;
 float rcu = 0;
 float psi_rate = 0;
 float psi = 0;
+final int max_bullets = 16;
+int last_fire_ms = 0;
 
 
-Asteroid asteroids[];
+ArrayList<Asteroid> asteroids;
 
 void setup()
 {
@@ -31,10 +34,13 @@ void setup()
 	ship.v = new PVector(0,-1,0).normalize();
 	ship.vel = 0.1;
 
-	asteroids = new Asteroid[8];
+	bullets = new ArrayList<Bullet>();
+
+	asteroids = new ArrayList<Asteroid>();
+
 	for(int i = 0 ; i < 8 ; i++)
 	{
-		asteroids[i] = new Asteroid();
+		asteroids.add(new Asteroid());
 	}
 
 	size(2000, 1125, P3D);
@@ -50,6 +56,8 @@ void setup()
 
 void keyPressed()
 {
+	int now = millis();
+
 	if (key == CODED) {
 		if (keyCode == UP)
 			thrust = 0.5;
@@ -69,10 +77,15 @@ void keyPressed()
 		ship.vel = 0;
 	} else
 	if (key == ' ') {
-		// fire a space bullet?
+		if (now - last_fire_ms > 200)
+		{
+			ship_fire();
+			last_fire_ms = now;
+		}
 
 		// arrest any rotation
-		psi_rate = 0;
+		if (easy)
+			psi_rate = 0;
 	}
 }
 
@@ -96,6 +109,8 @@ void keyReleased()
 
 void draw()
 {
+	final int now = millis();
+
 	background(0);
 	pushMatrix();
 
@@ -156,7 +171,7 @@ void draw()
 	ship.update(dt);
 
 	PVector cpos = PVector.mult(ship.p, 1.5*radius);
-	PVector ccen = PVector.mult(up, -radius/3);
+	PVector ccen = PVector.mult(up, -radius/2.5);
 	//cpos.sub(ccen);
 
 	camera(
@@ -172,15 +187,77 @@ void draw()
 	planet.display(radius);
 
 	// update the asteroid positions
-	for(Asteroid asteroid : asteroids)
+	for (int i = asteroids.size() - 1; i >= 0; i--)
 	{
-		asteroid.update(dt);
-		asteroid.display(radius);
+		Asteroid a = asteroids.get(i);
+		a.update(dt);
+
+		if (!bullet_collision(a))
+		{
+			a.display(radius);
+			continue;
+		}
+
+		// this was hit by a bullet
+		asteroids.remove(i);
+
+		// if this was a small one, do not spawn any new ones
+		if (a.size < 5)
+			continue;
+
+		// split it into a few
+		for(int j = 0 ; j < 3 ; j++)
+		{
+			float sz = random(3,a.size/2);
+
+			Asteroid na = new Asteroid(a.p.p, sz);
+			na.display(radius);
+			asteroids.add(na);
+		}
+	}
+
+	// update the bullets, deleting them after their lifetime
+	for (int i = bullets.size() - 1; i >= 0; i--)
+	{
+		Bullet b = bullets.get(i);
+		if (!b.update(dt))
+		{
+			bullets.remove(i);
+			continue;
+		}
+
+		// draw it and check for collision
+		b.display(radius);
 	}
 
 	draw_ship(radius);
 
 	popMatrix();
+}
+
+
+boolean bullet_collision(Asteroid a)
+{
+	// check for collisions with the bullets
+	for (int j = bullets.size() - 1; j >= 0; j--)
+	{
+		Bullet b = bullets.get(j);
+		float dist = PVector.sub(a.p.p, b.p.p).mag() * radius;
+		if (dist > a.size * 6)
+			continue;
+
+		// close enough
+		System.out.print("hit! ");
+		System.out.print(a.p.p);
+		System.out.print(" ");
+		System.out.print(b.p.p);
+		System.out.println();
+		bullets.remove(j);
+		return true;
+	}
+
+	// no bullets collided with this asteroid
+	return false;
 }
 
 void draw_ship(float radius)
@@ -270,6 +347,14 @@ void draw_ship(float radius)
 	translate(p.x, p.y, p.z);
 	box(10);
 	popMatrix();
+}
+
+
+void ship_fire()
+{
+	// fire a space bullet, lined up with current direction
+	Bullet b = new Bullet(ship, psi);
+	bullets.add(b);
 }
 
 /*

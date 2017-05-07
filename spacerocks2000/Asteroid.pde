@@ -3,7 +3,7 @@
  */
 class Asteroid
 {
-	SpherePoint pos;
+	SpherePoint p;
 	float path[];
 	float size;
 	float rate;
@@ -11,14 +11,20 @@ class Asteroid
 
 	Asteroid()
 	{
-		pos = new SpherePoint();
-		pos.p = PVector.random3D().normalize();
-		pos.v = PVector.random3D().normalize().cross(pos.p).normalize();
-		//pos.v = new PVector(1,0,0).cross(pos.p);
-		pos.vel = 0.1;
-		size = random(10, 30);
-		rate = random(-0.5,0.5);
+		this(
+			PVector.random3D().normalize(), // random position
+			random(10, 30) // random size
+		);
+	}
 
+	Asteroid(PVector pos, float sz)
+	{
+		p = new SpherePoint();
+		p.p = pos;
+		p.v = PVector.random3D().normalize().cross(p.p).normalize();
+		p.vel = random(0.1,0.3);
+		rate = random(-0.5,0.5);
+		size = sz;
 		path = paths[(int)random(paths.length)];
 	}
 
@@ -78,7 +84,7 @@ class Asteroid
 
 	void update(float dt)
 	{
-		pos.update(dt);
+		p.update(dt);
 		angle += rate * dt;
 	}
 
@@ -87,12 +93,12 @@ class Asteroid
 		pushStyle();
 
 		pushMatrix();
-		PVector p = PVector.mult(pos.p, radius+30);
-		translate(p.x, p.y, p.z);
+		PVector rp = PVector.mult(p.p, radius+30);
+		translate(rp.x, rp.y, rp.z);
 
 		// rotate to create the local tangent plane for the lat/lon
-		float lon = atan2(pos.p.y, pos.p.x);
-		float lat = asin(pos.p.z / pos.p.mag());
+		float lon = atan2(p.p.y, p.p.x);
+		float lat = asin(p.p.z / p.p.mag());
 		rotateZ(lon);
 		rotateY(-lat);
 		rotateX(angle);
@@ -107,14 +113,14 @@ class Asteroid
 /*
 		noStroke();
 		fill(255,255,255,255);
-		PVector p = PVector.mult(pos.p, radius);
+		PVector p = PVector.mult(p.p, radius);
 		translate(p.x, p.y, p.z);
 		sphere(20);
 */
 		popMatrix();
 
 		pushMatrix();
-		PVector next = pos.predict(1).mult(radius);
+		PVector next = p.predict(1).mult(radius);
 		translate(next.x, next.y, next.z);
 		stroke(255,0,0,80);
 		box(2);
