@@ -81,6 +81,8 @@ void keyPressed()
 			ship.p.vel = 0;
 			ship.delta_v -= 50;
 		}
+
+		ship.psi_rate = 0;
 	} else
 	if (key == 'r') {
 		restart();
@@ -284,6 +286,7 @@ void draw()
 		Satellite s = satellites.get(i);
 		s.update(dt);
 		s.display(radius);
+		boolean dead = false;
 
 		for(Asteroid a : asteroids)
 		{
@@ -291,9 +294,24 @@ void draw()
 				continue;
 
 			// this was hit by an asteroid
-			satellites.remove(i);
+			dead = true;
 			break;
 		}
+
+		// in non-easy mode we can friendly fire the satellites
+		if (!easy)
+		for(Bullet b : ship.bullets)
+		{
+			if (!s.collide(b.p.p, 8/radius))
+				continue;
+
+			// this was hit by an bullet
+			dead = true;
+			break;
+		}
+
+		if (dead)
+			satellites.remove(i);
 	}
 
 	ship.display(radius);
