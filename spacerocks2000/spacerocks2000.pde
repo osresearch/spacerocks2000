@@ -16,9 +16,11 @@ Ship ship;
 
 boolean easy = true;
 int starting_asteroids = 10;
+int starting_satellites = 4;
 
 
 ArrayList<Asteroid> asteroids;
+ArrayList<Satellite> satellites;
 
 void restart()
 {
@@ -26,6 +28,11 @@ void restart()
 
 	for(int i = 0 ; i < starting_asteroids ; i++)
 		asteroids.add(new Asteroid());
+
+	satellites = new ArrayList<Satellite>();
+
+	for(int i = 0 ; i < starting_satellites ; i++)
+		satellites.add(new Satellite());
 
 	ship.restart();
 }
@@ -177,6 +184,9 @@ void draw()
 
 	asteroids_write("Shield  " + str(ship.health), 100, 200, 2.0);
 
+	stroke(100, 100, 255, 255);
+	asteroids_write("SVs     " + str(satellites.size()), 100, 230, 2.0);
+
 	// update asteroid chart
 	int count[] = { 0, 0, 0, 0 };
 	for (Asteroid a : asteroids)
@@ -245,12 +255,10 @@ void draw()
 	{
 		Asteroid a = asteroids.get(i);
 		a.update(dt);
+		a.display(radius);
 
 		if (!ship.collide(a.p.p, a.size/radius))
-		{
-			a.display(radius);
 			continue;
-		}
 
 		// this was hit by a bullet or the ship
 		asteroids.remove(i);
@@ -267,6 +275,24 @@ void draw()
 			Asteroid na = new Asteroid(a.p.p, sz);
 			na.display(radius);
 			asteroids.add(na);
+		}
+	}
+
+	// update the satellite positions
+	for (int i = satellites.size() - 1; i >= 0; i--)
+	{
+		Satellite s = satellites.get(i);
+		s.update(dt);
+		s.display(radius);
+
+		for(Asteroid a : asteroids)
+		{
+			if (!s.collide(a.p.p, a.size/radius))
+				continue;
+
+			// this was hit by an asteroid
+			satellites.remove(i);
+			break;
 		}
 	}
 
