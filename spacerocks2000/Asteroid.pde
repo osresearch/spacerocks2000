@@ -17,6 +17,14 @@ class Asteroid
 		);
 	}
 
+	Asteroid(float size)
+	{
+		this(
+			PVector.random3D().normalize(), // random position
+			size
+		);
+	}
+
 	Asteroid(PVector pos, float sz)
 	{
 		p = new SpherePoint();

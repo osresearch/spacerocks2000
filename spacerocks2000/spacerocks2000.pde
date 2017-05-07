@@ -18,8 +18,11 @@ Rocket rocket;
 boolean attract = true;
 boolean healing = false;
 boolean easy = true;
-int starting_asteroids = 10;
-int starting_satellites = 4;
+int rocket_chance;
+int starting_asteroids;
+int starting_satellites;
+float minimum_satellite_size;
+int success_time;
 
 //import processing.sound.*;
 //SoundFile fire_sound, thrust_sound, boom_sound, rocket_sound, heal_sound;
@@ -34,15 +37,25 @@ void restart()
 	asteroids = new ArrayList<Asteroid>();
 
 	for(int i = 0 ; i < starting_asteroids ; i++)
-		asteroids.add(new Asteroid());
+		asteroids.add(new Asteroid(random(minimum_satellite_size, 40)));
 
 	satellites = new ArrayList<Satellite>();
 
 	for(int i = 0 ; i < starting_satellites ; i++)
 		satellites.add(new Satellite());
+}
 
+void restart_full()
+{
 	ship.restart();
+	rocket_chance = 1;
+	starting_satellites = 4;
+	starting_asteroids = 10;
+	minimum_satellite_size = 10;
 	attract = true;
+	easy = true;
+
+	restart();
 }
 
 void setup()
@@ -66,7 +79,7 @@ void setup()
 	stroke(212, 128, 32, 128);
 
 	frameRate(25);
-	restart();
+	restart_full();
 }
 
 
@@ -109,6 +122,10 @@ void keyPressed()
 
 		ship.psi_rate = 0;
 	} else
+	if (key == '9') {
+		// fake a level up by erasing all the asteroids
+		asteroids = new ArrayList<Asteroid>();
+	} else
 	if (key == 'r') {
 		restart();
 	} else
@@ -117,10 +134,6 @@ void keyPressed()
 	} else
 	if (key == ' ') {
 		ship.fire();
-
-		// arrest any rotation
-		if (easy)
-			ship.psi_rate = 0;
 	}
 }
 
@@ -209,8 +222,7 @@ void draw()
 		popMatrix();
 	} else {
 		// random chance of rocket
-		// TODO: scale chance with level
-		if (random(0,1000) < 1)
+		if (random(0,1000) < rocket_chance)
 			rocket = new Rocket();
 	}
 
@@ -299,6 +311,21 @@ void draw()
 		translate(width/2,height/2,height/2);
 		asteroids_write("SUCCESS", -300, 0, 8);
 		popMatrix();
+
+		if (success_time == 0)
+			success_time = now;
+		else
+		if (now - success_time > 3000)
+		{
+			// level up!
+			success_time = 0;
+			easy = false;
+			rocket_chance++;
+			minimum_satellite_size *= 0.7;
+			starting_asteroids *= 1.5;
+			ship.lives++;
+			restart();
+		}
 	}
 
 	ship.update(dt);
@@ -349,18 +376,19 @@ void draw()
 		asteroids.remove(i);
 		//boom_sound.play();
 
-		// if this was a small one, do not spawn any new ones
-		if (a.size < 10)
-			continue;
 
-		// split it into a few
-		for(int j = 0 ; j < 3 ; j++)
+		// split it into a few, but no more than 4
+		int new_asteroids = 0;
+		for(int j = 0 ; j < 8 && new_asteroids < 4 ; j++)
 		{
-			float sz = random(5,a.size/2);
+			float sz = random(1,a.size*.7);
+			if (sz < minimum_satellite_size)
+				continue;
 
 			Asteroid na = new Asteroid(a.p.p, sz);
 			na.display(radius);
 			asteroids.add(na);
+			new_asteroids++;
 		}
 	}
 
