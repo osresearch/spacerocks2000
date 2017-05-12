@@ -8,7 +8,7 @@
  * (c) 2017 Trammell Hudson
  */
 
-final float dt = 1.0 / 25;
+final float dt = 1.0 / 30;
 float radius = 900;
 Planet planet;
 
@@ -78,7 +78,7 @@ void setup()
 	noFill();
 	stroke(212, 128, 32, 128);
 
-	frameRate(25);
+	frameRate(30);
 	restart_full();
 }
 
