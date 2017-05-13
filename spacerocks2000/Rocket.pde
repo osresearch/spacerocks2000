@@ -24,13 +24,27 @@ class Rocket
 	boolean update(float dt, PVector target)
 	{
 		// steer towards the target, should be rate limited
-		p.v = p.p.cross(target).normalize();
+		PVector new_pv = p.p.cross(target).normalize();
+/*
+		PVector vel_dir = p.v.cross(p.p).normalize();
+		float angle = vectorAngle(new_pv, p.v);
+		if (angle > PI)
+			angle -= 2 * PI;
+		float max_angle = radians(20);
+		if (angle > max_angle)
+			angle = max_angle;
+		p.v = vectorRotate(p.v, p.p, angle);
+*/
+		p.v = new_pv;
 		p.update(dt);
 
-		// let them expire
-		if (millis() - creation > 10000)
-			return false;
-		return true;
+		// let them expire after 10 seconds
+		// indicate to the caller that this should be deleted
+		if (millis() - creation < 10000)
+			return true;
+
+		// keep going!
+		return false;
 	}
 
 	void display(float radius)
