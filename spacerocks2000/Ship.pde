@@ -122,6 +122,8 @@ class Ship
 
 	void display(float radius)
 	{
+		int now = millis();
+
 		//p.display(radius);
 		pushStyle();
 
@@ -142,20 +144,37 @@ class Ship
 			0, 0, 0, 1
 		);
 			
-		if (dead == 0)
-			stroke(255,255,255,255);
-		else
-			stroke(255,0,0,255);
-			
-		// draw the outline of the ship
 		noFill();
-		beginShape();
-		vertex(0,50,0);
-		vertex(-20,-20,0);
-		vertex(0,+0,0);
-		vertex(+20,-20,0);
-		vertex(0,50,0);
-		endShape();
+		if (dead == 0)
+		{
+			// draw the outline of the ship
+			stroke(255,255,255,255);
+			beginShape();
+			vertex(0,50,0);
+			vertex(-20,-20,0);
+			vertex(0,+0,0);
+			vertex(+20,-20,0);
+			vertex(0,50,0);
+			endShape();
+		} else {
+			// animate the ship coming apart over 1 second
+			stroke(255,0,0,255);
+			int dead_ms = dead - now;
+			if (dead_ms < 0)
+				dead_ms = 0;
+			if (dead_ms > 1000)
+				dead_ms = 1000;
+
+			scale(dead_ms / 1000.0);
+			beginShape();
+			vertex(0,50,0);
+			vertex(-20,-20,0);
+			vertex(0,+0,0);
+			vertex(+20,-20,0);
+			vertex(0,50,0);
+			endShape();
+		}
+			
 
 		// thrusters
 		stroke(255,0,0,100);
@@ -242,7 +261,7 @@ class Ship
 		if (shield_deployed && dead == 0)
 		{
 			// fade out the shield over the last second
-			int shield_remaining = shield_deployed_ms - millis();
+			int shield_remaining = shield_deployed_ms - now;
 			int fade = shield_remaining > 1024 ? 128
 				: shield_remaining / 8;
 
