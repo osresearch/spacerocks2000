@@ -184,9 +184,10 @@ void draw()
 		if (now - ship.dead > 1000)
 		{
 			ship.dead = 0;
-			ship.p.vel = 0.5;
+			ship.p.vel = 0.2;
 			ship.psi_rate = 0;
 			ship.health = 100;
+			ship.delta_v = 1000;
 		}
 	}
 
