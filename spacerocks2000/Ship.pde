@@ -5,6 +5,7 @@
 class Ship
 {
 	int dead;
+	float dead_angle;
 	int lives;
 	float health;
 	boolean healing;
@@ -38,8 +39,9 @@ class Ship
 	{
 		bullets = new ArrayList<Bullet>();
 
+		dead_angle = 0;
 		psi_rate = 0;
-		p.vel = 0.1;
+		p.vel = 0.3;
 		lives = 3;
 		dead = 0;
 		thrust = 0;
@@ -51,8 +53,10 @@ class Ship
 
 	void update(float dt)
 	{
+/*
 		if (dead != 0 || lives == 0)
 			return;
+*/
 
 		shield_update();
 
@@ -79,7 +83,7 @@ class Ship
 		if (psi < -PI)
 			psi += 2*PI;
 
-		if (thrust != 0 && delta_v > 0)
+		if (thrust != 0 && delta_v > 0 && dead == 0)
 		{
 			// we are thrusting, so adjust the velocity component
 			// by computing the current tangental velocity, applying
@@ -175,6 +179,8 @@ class Ship
 				dead_ms = 0;
 			if (dead_ms > 1000)
 				dead_ms = 1000;
+			rotateZ(dead_angle);
+			dead_angle += 0.2;
 
 			scale(dead_ms / 1000.0);
 			beginShape();

@@ -184,7 +184,8 @@ void draw()
 		if (now - ship.dead > 1000)
 		{
 			ship.dead = 0;
-			ship.p.vel = 0;
+			ship.p.vel = 0.5;
+			ship.psi_rate = 0;
 			ship.health = 100;
 		}
 	}
@@ -222,7 +223,7 @@ void draw()
 		pushMatrix();
 		stroke(255, 0, 0, 255);
 		translate(width/2,height/2,height/2);
-		asteroids_write("DANGER! ROCKET!", -250, -200, 3);
+		asteroids_write("DANGER! ROCKET!", -250, -15, 3);
 		popMatrix();
 	} else {
 		// random chance of rocket
