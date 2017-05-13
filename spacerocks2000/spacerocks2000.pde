@@ -16,7 +16,6 @@ Ship ship;
 Rocket rocket;
 
 boolean attract = true;
-boolean healing = false;
 boolean easy = true;
 int rocket_chance;
 int starting_asteroids;
@@ -253,7 +252,7 @@ void draw()
 	}
 */
 
-	if (healing)
+	if (ship.healing)
 		stroke(0, 255, 0, 255);
 	else
 	if (ship.delta_v < 100)
@@ -266,13 +265,13 @@ void draw()
 
 	asteroids_write("Delta-V " + str((int) ship.delta_v), 100, 170, 2.0);
 
-	if (healing)
+	if (ship.healing)
 		stroke(0, 255, 0, 255);
 	else
-	if (ship.health < 10)
+	if (ship.health < 30)
 		stroke(255, 0, 0, 255);
 	else
-	if (ship.health < 30)
+	if (ship.health < 60)
 		stroke(200, 200, 0, 255);
 	else
 		stroke(100, 100, 255, 255);
@@ -398,7 +397,7 @@ void draw()
 	}
 
 	// update the satellite positions
-	healing = false;
+	ship.healing = false;
 	for (int i = satellites.size() - 1; i >= 0; i--)
 	{
 		Satellite s = satellites.get(i);
@@ -415,7 +414,7 @@ void draw()
 			if (ship.health < 100)
 				ship.health += 0.01 / dist;
 			ship.delta_v += 0.1 / dist;
-			healing = true;
+			ship.healing = true;
 		}
 
 		// check for asteroids wiping out the satellite

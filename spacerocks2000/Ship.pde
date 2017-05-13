@@ -7,6 +7,7 @@ class Ship
 	int dead;
 	int lives;
 	float health;
+	boolean healing;
 	float delta_v;
 	int shield_deployed_ms;
 	boolean shield_deployed;
@@ -148,7 +149,17 @@ class Ship
 		if (dead == 0)
 		{
 			// draw the outline of the ship
-			stroke(255,255,255,255);
+			if (healing)
+				stroke(0, 255, 0, 255);
+			else
+			if (health < 30)
+				stroke(255, 0, 0, 255);
+			else
+			if (health < 60)
+				stroke(200, 200, 0, 255);
+			else
+				stroke(255, 255, 255, 255);
+
 			beginShape();
 			vertex(0,50,0);
 			vertex(-20,-20,0);
