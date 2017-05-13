@@ -70,8 +70,8 @@ void setup()
 */
 
 	//size(2560, 1400, P3D);
-	size(1920, 1000, P3D);
-	//fullScreen(P3D);
+	//size(1920, 1000, P3D);
+	fullScreen(P3D, 2);
 	surface.setResizable(true);
 
 	blendMode(ADD);
@@ -191,7 +191,7 @@ void draw()
 	}
 
 	// check for still lives
-	if (ship.lives == 0)
+	if (ship.lives <= 0)
 	{
 		pushMatrix();
 		stroke(255, 255, 0, 255);
