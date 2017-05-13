@@ -5,7 +5,6 @@ class Asteroid
 {
 	SpherePoint p;
 	float path[];
-	float size;
 	float rate;
 	float angle;
 
@@ -31,8 +30,8 @@ class Asteroid
 		p.p = pos;
 		p.v = PVector.random3D().normalize().cross(p.p).normalize();
 		p.vel = random(0.1,0.3);
+		p.radius = sz * 4 / 1000.0;
 		rate = random(-0.5,0.5);
-		size = sz;
 		path = paths[(int)random(paths.length)];
 	}
 
@@ -98,6 +97,8 @@ class Asteroid
 
 	void display(float radius)
 	{
+		//p.display(radius);
+
 		pushStyle();
 
 		pushMatrix();
@@ -115,7 +116,7 @@ class Asteroid
 		stroke(255,255,255,255);
 		beginShape();
 		for(int i = 0 ; i < path.length ; i+=2)
-			vertex(0,path[i+0]*size, path[i+1]*size);
+			vertex(0,path[i+0]*radius*p.radius/4, path[i+1]*radius*p.radius/4);
 		endShape();
 
 		popMatrix();

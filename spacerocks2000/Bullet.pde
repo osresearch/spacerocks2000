@@ -13,6 +13,7 @@ class Bullet
 		p = new SpherePoint();
 		p.vel = 2.1;
 		p.p = initial.p.copy();
+		p.radius = 4 / 1000.0;
 		PVector vel_dir = initial.v.cross(initial.p).normalize();
 		PVector acc_dir = vectorRotate(vel_dir, initial.p, psi);
 		p.v = initial.p.cross(acc_dir).normalize();
@@ -50,18 +51,9 @@ class Bullet
 		popStyle();
 	}
 
-	boolean collide(PVector pos, float size)
+	boolean collide(SpherePoint p2, float dt)
 	{
-		// check over the next dt, subdivided
-		for(float dt = 0 ; dt < 0.5 ; dt += 0.05)
-		{
-			PVector np = p.predict(dt/10);
-			float dist = PVector.sub(pos, np).mag();
-			if (dist < size * 6)
-				return true;
-		}
-
-		// nope
-		return false;
+		return p.collide(p2, dt);
 	}
+
 };

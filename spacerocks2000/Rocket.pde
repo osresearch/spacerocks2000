@@ -17,6 +17,7 @@ class Rocket
 		p.p = pos;
 		p.v = PVector.random3D().normalize().cross(p.p).normalize();
 		p.vel = 0.5;
+		p.radius = 5 / 1000.0;
 		creation = millis();
 	}
 
@@ -34,6 +35,8 @@ class Rocket
 
 	void display(float radius)
 	{
+		//p.display(radius);
+
 		pushStyle();
 
 		pushMatrix();

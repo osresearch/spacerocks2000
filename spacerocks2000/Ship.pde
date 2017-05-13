@@ -1,4 +1,4 @@
-/** \file
+/* \file
  * Player's ship class.
  */
 
@@ -26,6 +26,7 @@ class Ship
 		p.p = new PVector(1,0,0).normalize();
 		//p.v = new PVector(0,-1,0).normalize();
 		p.v = new PVector(0,-1,-2.2).normalize();
+		p.radius = 20 / 1000.0;
 
 		restart();
 	}
@@ -115,6 +116,7 @@ class Ship
 
 	void display(float radius)
 	{
+		//p.display(radius);
 		pushStyle();
 
 		// move to the current position of the ship
@@ -270,12 +272,14 @@ class Ship
 		bullets.add(b);
 	}
 
-	boolean collide(PVector pos, float size, float damage)
+	boolean collide(SpherePoint p2, float dt, float damage)
 	{
 		// check for a ship collision
-		float dist = PVector.sub(pos, p.p).mag();
-		if (dist < size * 4 && dead == 0)
+		if (p.collide(p2, dt))
 		{
+			// draw the impact sphere
+			p.display(1000);
+
 			// subtract a few health points
 			health -= damage;
 			if (health > 0)
@@ -294,9 +298,11 @@ class Ship
 		for (int j = bullets.size() - 1; j >= 0; j--)
 		{
 			Bullet b = bullets.get(j);
-			if (!b.collide(pos, size))
+			if (!b.p.collide(p2, dt))
 				continue;
+
 			// close enough
+			b.p.display(1000);
 			bullets.remove(j);
 			return true;
 		}

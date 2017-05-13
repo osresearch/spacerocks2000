@@ -105,14 +105,4 @@ class Satellite
 
 		popStyle();
 	}
-
-	boolean collide(PVector pos, float size)
-	{
-		float dist = PVector.sub(pos, p.p).mag();
-		if (dist < size * 4)
-			return true;
-
-		// nope
-		return false;
-	}
 };

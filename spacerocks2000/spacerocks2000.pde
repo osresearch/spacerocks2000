@@ -9,7 +9,7 @@
  */
 
 final float dt = 1.0 / 30;
-float radius = 900;
+float radius = 1000;
 Planet planet;
 
 Ship ship;
@@ -70,7 +70,8 @@ void setup()
  	heal_sound = new SoundFile(this, "beat1.wav");
 */
 
-	size(2560, 1400, P3D);
+	//size(2560, 1400, P3D);
+	size(1920, 1000, P3D);
 	//fullScreen(P3D);
 	surface.setResizable(true);
 
@@ -159,7 +160,7 @@ void keyReleased()
 void draw()
 {
 	final int now = millis();
-	radius = width/2;
+	//radius = width/2;
 
 	background(0);
 	pushMatrix();
@@ -281,7 +282,7 @@ void draw()
 	int count[] = { 0, 0, 0, 0 };
 	for (Asteroid a : asteroids)
 	{
-		int bin = ((int)a.size / 5) - 1;
+		int bin = (int)(a.p.radius * 1000 / 20) - 1;
 		if (bin < 0) bin = 0;
 		if (bin > 3) bin = 3;
 		count[bin]++;
@@ -369,7 +370,7 @@ void draw()
 		if (attract)
 			continue;
 
-		if (!ship.collide(a.p.p, a.size/radius, a.size))
+		if (!ship.collide(a.p, dt, 33))
 			continue;
 
 		// this was hit by a bullet or the ship
@@ -381,7 +382,7 @@ void draw()
 		int new_asteroids = 0;
 		for(int j = 0 ; j < 8 && new_asteroids < 4 ; j++)
 		{
-			float sz = random(1,a.size*.7);
+			float sz = random(1,a.p.radius*1000*.7/4);
 			if (sz < minimum_satellite_size)
 				continue;
 
@@ -416,10 +417,11 @@ void draw()
 		// check for asteroids wiping out the satellite
 		for(Asteroid a : asteroids)
 		{
-			if (!s.collide(a.p.p, a.size/radius))
+			if (!s.p.collide(a.p, dt))
 				continue;
 
 			// this was hit by an asteroid
+			s.p.display(radius);
 			dead = true;
 			break;
 		}
@@ -428,10 +430,11 @@ void draw()
 		if (!easy)
 		for(Bullet b : ship.bullets)
 		{
-			if (!s.collide(b.p.p, 8/radius))
+			if (!s.p.collide(b.p, dt))
 				continue;
 
 			// this was hit by an bullet
+			s.p.display(radius);
 			dead = true;
 			break;
 		}
@@ -477,16 +480,18 @@ void rocket_update()
 	// see if the rocket has been shot down, although it is hard
 	for(Bullet b : ship.bullets)
 	{
-		if (!b.collide(rocket.p.p, 0.1/radius))
+		if (!b.p.collide(rocket.p, dt))
 			continue;
+		rocket.p.display(radius);
 		rocket = null;
 		return;
 	}
 
 
 	// if the rocket hits the ship, delete it
-	if (ship.collide(rocket.p.p, 10/radius, attract ? 0 : 100))
+	if (ship.collide(rocket.p, dt, attract ? 0 : 100))
 	{
+		rocket.p.display(radius);
 		rocket = null;
 		return;
 	}

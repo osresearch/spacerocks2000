@@ -31,6 +31,7 @@ class SpherePoint
 		p = new PVector(1,0,0);
 		v = new PVector(0,1,0);
 		vel = 0;
+		radius = 0;
 	}
 
 	void fromLatLon(float lat, float lon, float psi, float mag)
@@ -49,6 +50,7 @@ class SpherePoint
 	PVector p; // position on the sphere
 	PVector v; // perpendicular to p, describing the great circle
 	float vel; // magnitude of the velocity rotation in rads/s
+	float radius; // collision detection radius
 
 	PVector predict(float dt)
 	{
@@ -60,5 +62,39 @@ class SpherePoint
 	void update(float dt)
 	{
 		p = predict(dt);
+	}
+
+	// check if the two sphere points will collide over the
+	// next dt, iterating a few times to deal with errors
+	boolean collide(SpherePoint b, float dt)
+	{
+		for(float t = 0 ; t < dt ; t += dt/8)
+		{
+			PVector p1 = predict(t);
+			PVector p2 = b.predict(t);
+			float dist = p1.sub(p2).mag();
+
+			// they are close enough to hit at time t
+			if (dist < radius + b.radius)
+				return true;
+		}
+
+		// they do not collide over the next dt
+		return false;
+	}
+
+	void display(float planet_radius)
+	{
+		pushStyle();
+		pushMatrix();
+
+		noFill();
+		stroke(0,255,0,20);
+		PVector px = PVector.mult(p, planet_radius+30);
+		translate(px.x, px.y, px.z);
+		sphere(planet_radius * radius);
+
+		popMatrix();
+		popStyle();
 	}
 };
