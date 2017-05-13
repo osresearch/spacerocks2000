@@ -321,7 +321,10 @@ class Ship
 			return;
 		if (dead != 0)
 			return;
+		if (delta_v <= 0)
+			return;
 
+		delta_v--;
 		last_fire_ms = now;
 		//fire_sound.play();
 
