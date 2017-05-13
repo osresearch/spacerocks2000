@@ -8,6 +8,8 @@ class Ship
 	int lives;
 	float health;
 	float delta_v;
+	int shield_deployed_ms;
+	boolean shield_deployed;
 
 
 	SpherePoint p;
@@ -42,12 +44,16 @@ class Ship
 		thrust = 0;
 		health = 100;
 		delta_v = 999;
+		shield_deployed = false;
+		p.radius = 20 / 1000.0;
 	}
 
 	void update(float dt)
 	{
 		if (dead != 0 || lives == 0)
 			return;
+
+		shield_update();
 
 		// set the camera to be looking at the planet
 		// from off in the X axis.  Our "UP" is in the direction
@@ -233,6 +239,22 @@ class Ship
 			endShape();
 		}
 
+		if (shield_deployed && dead == 0)
+		{
+			// fade out the shield over the last second
+			int shield_remaining = shield_deployed_ms - millis();
+			int fade = shield_remaining > 1024 ? 128
+				: shield_remaining / 8;
+
+			pushMatrix();
+			stroke(0,255,0,fade);
+			PVector px = PVector.mult(p.p, radius+50);
+			translate(px.x, px.y, px.z);
+			sphere(100);
+			popMatrix();
+		}
+
+
 		popStyle();
 
 		display_bullets(radius);
@@ -272,6 +294,7 @@ class Ship
 		bullets.add(b);
 	}
 
+	// see if the ship has impacted an asteroids
 	boolean collide(SpherePoint p2, float dt, float damage)
 	{
 		// check for a ship collision
@@ -279,6 +302,11 @@ class Ship
 		{
 			// draw the impact sphere
 			p.display(1000);
+
+			// if we do not have the shield deployed
+			// then we're ok, but the asteroid is destroyed
+			if (shield_deployed)
+				return true;
 
 			// subtract a few health points
 			health -= damage;
@@ -309,5 +337,46 @@ class Ship
 
 		// no bullets nor the ship collided with this asteroid
 		return false;
+	}
+
+	void shield(int ms)
+	{
+		int now = millis();
+
+		// don't allow redeployment
+		if (shield_deployed)
+			return;
+
+		// prevent shield redeploy too soon
+		if (now - shield_deployed_ms < 3000)
+			return;
+
+		// don't allow shield deployment if delta_v is too low
+		if (delta_v < 100)
+			return;
+		delta_v -= 100;
+
+		// they have deployed the shield for ms miliseconds
+		// increase the size of the ship for now
+		shield_deployed = true;
+		shield_deployed_ms = now + ms;
+		p.radius = 100.0 / 1000;
+	}
+
+	void shield_update()
+	{
+		if (!shield_deployed)
+			return;
+
+		int now = millis();
+		int shield_remaining = shield_deployed_ms - now;
+		if (shield_remaining > 0)
+			return;
+
+		// the shield has run out; start the timer for
+		// redeployment and reduce to normal ship collision size
+		shield_deployed = false;
+		shield_deployed_ms = now;
+		p.radius = 20.0 / 1000;
 	}
 };

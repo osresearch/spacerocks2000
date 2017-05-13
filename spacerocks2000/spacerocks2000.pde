@@ -113,7 +113,7 @@ void keyPressed()
 		// toggle the rotation assist
 		easy = !easy;
 	} else
-	if (key == 'z') {
+	if (key == 'x') {
 		// space brakes cost delta_v
 		if(ship.delta_v >= 50)
 		{
@@ -123,6 +123,10 @@ void keyPressed()
 
 		ship.psi_rate = 0;
 	} else
+	if (key == 'z') {
+		// deploy the shield for a second
+		ship.shield(1000);
+	}
 	if (key == '9') {
 		// fake a level up by erasing all the asteroids
 		asteroids = new ArrayList<Asteroid>();
