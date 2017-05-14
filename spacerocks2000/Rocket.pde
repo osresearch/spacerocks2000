@@ -51,7 +51,7 @@ class Rocket
 	{
 		//p.display(radius);
 
-		pushStyle();
+		//pushStyle();
 
 		pushMatrix();
 		PVector rp = PVector.mult(p.p, radius+30);
@@ -133,7 +133,7 @@ class Rocket
 		}
 		endShape();
 
-		popStyle();
+		//popStyle();
 	}
 
 	boolean collide(PVector pos, float size)

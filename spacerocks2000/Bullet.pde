@@ -12,7 +12,7 @@ class Bullet
 
 		p = new SpherePoint();
 		p.vel = 2.1;
-		p.p = initial.p.copy();
+		p.p = new PVector(initial.p.x, initial.p.y, initial.p.z);
 		p.radius = 4 / 1000.0;
 		PVector vel_dir = initial.v.cross(initial.p).normalize();
 		PVector acc_dir = vectorRotate(vel_dir, initial.p, psi);
@@ -29,7 +29,7 @@ class Bullet
 
 	void display(float radius)
 	{
-		pushStyle();
+		//pushStyle();
 		pushMatrix();
 		noFill();
 		stroke(255,0,255,255);
@@ -48,7 +48,7 @@ class Bullet
 			vertex(np.x, np.y, np.z);
 		}
 		endShape();
-		popStyle();
+		//popStyle();
 	}
 
 	boolean collide(SpherePoint p2, float dt)

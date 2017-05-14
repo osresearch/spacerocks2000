@@ -69,12 +69,12 @@ void setup()
  	heal_sound = new SoundFile(this, "beat1.wav");
 */
 
-	//size(2560, 1400, P3D);
-	//size(1920, 1000, P3D);
-	fullScreen(P3D, 2);
-	surface.setResizable(true);
+	size(1920, 1000, P3D);
+	//fullScreen(P3D, 2);
 
-	blendMode(ADD);
+	// processing.js doesn't support blendMode?
+	//blendMode(ADD);
+
 	noFill();
 	stroke(212, 128, 32, 128);
 

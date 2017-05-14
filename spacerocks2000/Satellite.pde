@@ -27,7 +27,7 @@ class Satellite
 
 	void display(float radius)
 	{
-		pushStyle();
+		//pushStyle();
 
 		pushMatrix();
 		PVector rp = PVector.mult(p.p, radius+30);
@@ -103,6 +103,6 @@ class Satellite
 		}
 		endShape();
 
-		popStyle();
+		//popStyle();
 	}
 };

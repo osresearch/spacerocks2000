@@ -85,7 +85,7 @@ class SpherePoint
 
 	void display(float planet_radius)
 	{
-		pushStyle();
+		//pushStyle();
 		pushMatrix();
 
 		noFill();
@@ -95,6 +95,6 @@ class SpherePoint
 		sphere(planet_radius * radius);
 
 		popMatrix();
-		popStyle();
+		//popStyle();
 	}
 };

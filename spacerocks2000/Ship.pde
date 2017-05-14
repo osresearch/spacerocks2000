@@ -141,7 +141,7 @@ class Ship
 		int now = millis();
 
 		//p.display(radius);
-		pushStyle();
+		//pushStyle();
 
 		// move to the current position of the ship
 		pushMatrix();
@@ -302,7 +302,7 @@ class Ship
 		}
 
 
-		popStyle();
+		//popStyle();
 
 		display_bullets(radius);
 	}

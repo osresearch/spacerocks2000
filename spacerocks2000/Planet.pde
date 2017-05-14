@@ -16,22 +16,24 @@ class Planet
 
 	Planet()
 	{
-		int i = 0;
-		Table points = loadTable("countries.tsv");
-		country_points = new float[points.getRowCount()*2];
-		for(TableRow row : points.rows())
+		String points[];
+
+		points = loadStrings("data/countries.tsv");
+		country_points = new float[points.length*2];
+		for(int i = 0 ; i < points.length ; i++)
 		{
-			country_points[i++] = radians(row.getFloat(0));
-			country_points[i++] = radians(row.getFloat(1));
+			float row[] = float(split(points[i],'\t'));
+			country_points[2*i+0] = radians(row[0]);
+			country_points[2*i+1] = radians(row[1]);
 		}
 
-		i = 0;
-		points = loadTable("continents.tsv");
-		map_points = new float[points.getRowCount()*2];
-		for(TableRow row : points.rows())
+		points = loadStrings("data/continents.tsv");
+		map_points = new float[points.length*2];
+		for(int i = 0 ; i < points.length ; i++)
 		{
-			map_points[i++] = radians(row.getFloat(0));
-			map_points[i++] = radians(row.getFloat(1));
+			float row[] = float(split(points[i],'\t'));
+			map_points[2*i+0] = radians(row[0]);
+			map_points[2*i+1] = radians(row[1]);
 		}
 	}
 
@@ -63,7 +65,7 @@ class Planet
 
 	void display(float radius)
 	{
-		pushStyle();
+		//pushStyle();
 
 		fill(0,0,0);
 		stroke(30,30,30);
@@ -78,6 +80,6 @@ class Planet
 		stroke(255,255,255,60);
 		display_points(radius, country_points);
 
-		popStyle();
+		//popStyle();
 	}
 };

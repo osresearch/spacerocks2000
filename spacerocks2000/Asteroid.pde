@@ -99,7 +99,7 @@ class Asteroid
 	{
 		//p.display(radius);
 
-		pushStyle();
+		//pushStyle();
 
 		pushMatrix();
 		PVector rp = PVector.mult(p.p, radius+30);
@@ -131,6 +131,6 @@ class Asteroid
 		popMatrix();
 */
 
-		popStyle();
+		//popStyle();
 	}
 };
