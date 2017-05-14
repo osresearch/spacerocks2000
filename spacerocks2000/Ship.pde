@@ -5,6 +5,7 @@
 class Ship
 {
 	int dead;
+	int delta_v_zero_ms;
 	float dead_angle;
 	int lives;
 	float health;
@@ -53,10 +54,20 @@ class Ship
 
 	void update(float dt)
 	{
+		int now = millis();
 /*
 		if (dead != 0 || lives == 0)
 			return;
 */
+		if (delta_v <= 0)
+		{
+			if (delta_v_zero_ms == 0)
+				delta_v_zero_ms = now;
+			if (now - delta_v_zero_ms > 10000)
+				shipDead();
+		} else {
+			delta_v_zero_ms = 0;
+		}
 
 		shield_update();
 
@@ -352,12 +363,7 @@ class Ship
 			if (health > 0)
 				return true;
 
-			// we've run out of health
-			health = 0;
-			dead = millis() + 1000;
-			if (--lives == 0)
-				dead += 5000;
-
+			shipDead();
 			return true;
 		}
 
@@ -418,4 +424,19 @@ class Ship
 		shield_deployed_ms = now;
 		p.radius = 20.0 / 1000;
 	}
+
+
+	void shipDead()
+	{
+		// we're already dead
+		if (dead != 0)
+			return;
+
+		// we've run out of health
+		health = 0;
+		dead = millis() + 1000;
+		if (--lives == 0)
+			dead += 5000;
+	}
+
 };
