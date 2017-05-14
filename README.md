@@ -11,7 +11,7 @@ game play shows the major features:
 * Down arrow is retro-thruster.
 * Space bar fires.
 * `e` switches off "easy" mode, enables friendly fire against satellites and disables spin stabilization.
-* 'z' activates space brakes, but costs 50 delta-V.
+* 'z' activates shield, but costs 100 delta-V.
 
 The retro-thruster is not quite as powerful as the main thruster,
 so to slow down it is better to do a a "skew flip" to face the opposite
@@ -29,12 +29,9 @@ It can be out run or shot down.  The rocket dynamics need some updates.
 Todo:
 
 * Scoring: points for smaller asteroids?
-* Joystick interface
 * Hyperspace? (and possible destruction)
 * Sound (in progress)
 * Aliens
-* Track number of bullets fired.
-* Improve bullet accuracy
 
 Done:
 
@@ -46,6 +43,9 @@ Done:
 * Satellites: prevent asteroids from destroying them
 * ICBM launches to be shot down
 * Level up
+* Joystick interface
+* Track number of bullets fired.
+* Improve bullet accuracy
 
 Country data
 ===
