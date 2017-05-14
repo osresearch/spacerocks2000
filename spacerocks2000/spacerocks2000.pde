@@ -232,6 +232,15 @@ void draw()
 			rocket = new Rocket();
 	}
 
+	if (ship.delta_v <= 0)
+	{
+		pushMatrix();
+		stroke(255, 0, 0, 255);
+		translate(width/2,height/2,height/2);
+		asteroids_write("DELTA V = 0!", -225, -100, 3);
+		popMatrix();
+	}
+
 	if (satellites.size() == 0)
 	{
 		// occasionally launch a new satellite for them
