@@ -18,7 +18,7 @@ class Planet
 	{
 		String points[];
 
-		points = loadStrings("data/countries.tsv");
+		points = loadStrings("data/countries.txt");
 		country_points = new float[points.length*2];
 		for(int i = 0 ; i < points.length ; i++)
 		{
@@ -27,7 +27,7 @@ class Planet
 			country_points[2*i+1] = radians(row[1]);
 		}
 
-		points = loadStrings("data/continents.tsv");
+		points = loadStrings("data/continents.txt");
 		map_points = new float[points.length*2];
 		for(int i = 0 ; i < points.length ; i++)
 		{
