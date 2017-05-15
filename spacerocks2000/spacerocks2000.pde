@@ -369,7 +369,7 @@ void draw()
 	// draw the planet underneath us,
 	// the camera is already in the ship position,
 	// so the planet is drawn in ECEF frame
-	planet.display(radius);
+	planet.display(ship.p.p, radius);
 	ship.display(radius);
 
 	if (attract)

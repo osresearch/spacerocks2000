@@ -37,7 +37,7 @@ class Planet
 		}
 	}
 
-	void display_points(float radius, float points[])
+	void display_points(PVector viewpoint, float radius, float points[])
 	{
 		beginShape();
 		for(int i = 0 ; i < points.length; i+=2)
@@ -53,17 +53,25 @@ class Planet
 
 			// project n,e into x,y,z,
 			// remembering that processing has a left hand frame
-			float x = radius * cos(lat)*cos(lon);
-			float y = radius * cos(lat)*sin(lon);
-			float z = radius * sin(lat);
-			vertex(x,-y,z);
+			PVector xyz = new PVector(
+				+cos(lat)*cos(lon),
+				-cos(lat)*sin(lon),
+				sin(lat)
+			);
+
+			float dist = PVector.sub(viewpoint, xyz).mag();
+			if (dist > 0.5)
+				continue;
+
+			xyz.mult(radius);
+			vertex(xyz.x,xyz.y,xyz.z);
 		}
 
 		endShape();
 	}
 
 
-	void display(float radius)
+	void display(PVector viewpoint, float radius)
 	{
 		//pushStyle();
 
@@ -76,9 +84,9 @@ class Planet
 
 		noFill();
 		stroke(255,255,255,80);
-		display_points(radius, map_points);
+		display_points(viewpoint, radius, map_points);
 		stroke(255,255,255,60);
-		display_points(radius, country_points);
+		display_points(viewpoint, radius, country_points);
 
 		//popStyle();
 	}
