@@ -60,7 +60,7 @@ class Planet
 			);
 
 			float dist = PVector.sub(viewpoint, xyz).mag();
-			if (dist > 0.5)
+			if (dist > 0.9)
 				continue;
 
 			xyz.mult(radius);
